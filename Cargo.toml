@@ -18,6 +18,9 @@ harness = false
 [badges]
 travis-ci = { repository = "niklasf/rust-btoi" }
 
+[dependencies]
+num-traits = "0.1"
+
 [dev-dependencies]
 quickcheck = "0.4"
 bencher = "0.1"

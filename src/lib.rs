@@ -1,20 +1,21 @@
 #[cfg(test)]
 #[macro_use]
 extern crate quickcheck;
+extern crate num_traits;
 
-fn ascii_to_digit(ch: u8, radix: u32) -> Option<u32> {
+use num_traits::FromPrimitive;
+
+#[inline]
+fn ascii_to_digit<I: FromPrimitive>(ch: u8, radix: u8) -> Option<I> {
     assert!(radix >= 2 && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);
 
-    let val = match ch {
-        b'0' ... b'9' => (ch - b'0') as u32,
-        b'a' ... b'z' => (ch - b'a') as u32 + 10,
-        b'A' ... b'Z' => (ch - b'A') as u32 + 10,
-        _ => return None,
-    };
-
-    if val < radix { Some(val) }
-    else { None }
+    match ch {
+        b'0' ... b'9' if ch < b'0' + radix      => I::from_u8(ch - b'0'),
+        b'a' ... b'z' if ch < b'a' + radix - 10 => I::from_u8(ch - b'a' + 10),
+        b'A' ... b'Z' if ch < b'A' + radix - 10 => I::from_u8(ch - b'A' + 10),
+        _ => None,
+    }
 }
 
 pub fn btou(bytes: &[u8]) -> Option<u32> {

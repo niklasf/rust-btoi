@@ -1,16 +1,16 @@
 btoi
 ====
 
+Parse integers from byte slices.
+
 [![Build Status](https://travis-ci.org/niklasf/rust-btoi.svg?branch=master)](https://travis-ci.org/niklasf/rust-btoi)
 [![crates.io](https://img.shields.io/crates/v/btoi.svg)](https://crates.io/crates/btoi)
 
-Parse integers from byte slices.
+Introduction
+------------
 
 Provides functions similar to [`from_str_radix`](https://doc.rust-lang.org/std/primitive.u32.html#method.from_str_radix),
 but is faster when parsing directly from byte slices instead of strings.
-
-Example
--------
 
 ```rust
 use btoi::btoi;

@@ -3,9 +3,19 @@
 extern crate quickcheck;
 extern crate num_traits;
 
-use num_traits::{FromPrimitive, Zero, CheckedAdd, CheckedSub, CheckedMul};
+use num_traits::{
+    FromPrimitive,
+    Zero,
+    CheckedAdd,
+    CheckedSub,
+    CheckedMul,
+    Saturating,
+    Bounded,
+};
 
-fn ascii_to_digit<I: FromPrimitive>(ch: u8, radix: u8) -> Option<I> {
+fn ascii_to_digit<I>(ch: u8, radix: u8) -> Option<I>
+    where I: FromPrimitive
+{
     assert!(2 <= radix && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);
 
@@ -91,6 +101,74 @@ pub fn btoi<I>(bytes: &[u8]) -> Option<I>
     btoi_radix(bytes, 10)
 }
 
+pub fn btou_saturating_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
+    where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
+{
+    if bytes.is_empty() {
+        return None;
+    }
+
+    let mut result = I::zero();
+    let base = I::from_u8(radix).expect("radix can be represented as integer");
+
+    for &digit in bytes {
+        let x = match ascii_to_digit(digit, radix) {
+            Some(x) => x,
+            None => return None,
+        };
+        result = match result.checked_mul(&base) {
+            Some(result) => result,
+            None => return Some(I::max_value()),
+        };
+        result = result.saturating_add(x);
+    }
+
+    Some(result)
+}
+
+pub fn btou_saturating<I>(bytes: &[u8]) -> Option<I>
+    where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
+{
+    btou_saturating_radix(bytes, 10)
+}
+
+pub fn btoi_saturating_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
+    where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
+{
+    if bytes.is_empty() {
+        return None;
+    }
+
+    let digits = match bytes[0] {
+        b'+' => return btou_saturating_radix(&bytes[1..], radix),
+        b'-' => &bytes[1..],
+        _ => return btou_saturating_radix(bytes, radix),
+    };
+
+    let mut result = I::zero();
+    let base = I::from_u8(radix).expect("radix can be represented as integer");
+
+    for &digit in digits {
+        let x = match ascii_to_digit(digit, radix) {
+            Some(x) => x,
+            None => return None,
+        };
+        result = match result.checked_mul(&base) {
+            Some(result) => result,
+            None => return Some(I::min_value()),
+        };
+        result = result.saturating_sub(x);
+    }
+
+    Some(result)
+}
+
+pub fn btoi_saturating<I>(bytes: &[u8]) -> Option<I>
+    where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
+{
+    btoi_saturating_radix(bytes, 10)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -102,6 +180,14 @@ mod tests {
 
         fn btoi_identity(n: i32) -> bool {
             Some(n) == btoi(n.to_string().as_bytes())
+        }
+
+        fn btou_saturating_identity(n: u32) -> bool {
+            Some(n) == btou_saturating(n.to_string().as_bytes())
+        }
+
+        fn btoi_saturating_identity(n: i32) -> bool {
+            Some(n) == btoi_saturating(n.to_string().as_bytes())
         }
     }
 }

@@ -1,3 +1,57 @@
+// Copyright 2017 Niklas Fiekas <niklas.fiekas@backscattering.de>
+//
+// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+// http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+// <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
+// option. This file may not be copied, modified, or distributed
+// except according to those terms.
+
+//! Parse integers from byte slices.
+//!
+//! Provides functions similar to [`from_str_radix`], but is faster when
+//! parsing directly from byte slices instead of strings.
+//!
+//! # Errors
+//!
+//! All functions return [`ParseIntegerError`] for these error conditions:
+//!
+//! * The byte slice does not contain any digits.
+//! * Not all characters are `0-9`, `a-z`, `A-Z`. Leading or trailing
+//!   whitespace is not allowed. The `btoi*` functions accept on optional
+//!   leading `+` or `-` sign. The `btou*` functions respectively do not
+//!   allow signs.
+//! * Not all digits are valid in the given radix.
+//! * The number overflows or underflows the target type, but wrapping
+//!   or saturating arithmetic is not used.
+//!
+//! # Panics
+//!
+//! Just like `from_str_radix` functions will panic if the given radix is
+//! not in the range `2..=36` (or in the pathological case that there is
+//! no representation of the radix in the target integer type).
+//!
+//! # Examples
+//!
+//! ```
+//! use btoi::btoi;
+//!
+//! assert_eq!(Ok(42), btoi(b"42"));
+//! assert_eq!(Ok(-1000), btoi(b"1000"));
+//! ```
+//!
+//! [`ParseIntegerError`]: struct.ParseIntegerError.html
+//! [`btoi`]: fn.btoi.html
+//! [`btoi_radix`]: fn.btoi_radix.html
+//! [`btoi_saturating`]: fn.btoi_saturating.html
+//! [`btoi_saturating_radix`]: fn.btoi_saturating_radix.html
+//! [`btou`]: fn.btou.html
+//! [`btou_radix`]: fn.btou_radix.html
+//! [`btou_saturating`]: fn.btou_saturating.html
+//! [`btou_saturating_radix`]: fn.btou_saturating_radix.html
+//! [`from_str_radix`]: https://doc.rust-lang.org/stable/std/primitive.u32.html#method.from_str_radix
+
+#![doc(html_root_url = "https://docs.rs/btoi/0.1.0")]
+
 #[cfg(test)]
 #[macro_use]
 extern crate quickcheck;

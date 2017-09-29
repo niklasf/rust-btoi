@@ -1,12 +1,12 @@
 [package]
 name = "btoi"
-version = "1.0.0" # remember to update html_root_url
+version = "0.1.0" # remember to update html_root_url
 authors = ["Niklas Fiekas <niklas.fiekas@backscattering.de>"]
 license = "MIT/Apache-2.0"
 keywords = ["conversion", "integer", "atoi"]
 readme = "README.md"
-repository = "https://github.com/niklasf/btoi"
-homepage = "https://github.com/niklasf/btoi"
+repository = "https://github.com/niklasf/rust-btoi"
+homepage = "https://github.com/niklasf/rust-btoi"
 documentation = "https://docs.rs/btoi"
 categories = ["parsing"]
 description = "Parse integers from byte slices"

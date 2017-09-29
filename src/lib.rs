@@ -74,7 +74,7 @@ extern crate num_traits;
 use std::fmt;
 use std::error::Error;
 
-use num_traits::{
+pub use num_traits::{
     FromPrimitive,
     Zero,
     CheckedAdd,

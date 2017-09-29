@@ -9,7 +9,7 @@ fn bench_btou(b: &mut Bencher) {
 }
 
 fn bench_btou_saturating(b: &mut Bencher) {
-    b.iter(|| assert_eq!(Some(123456789u32), btoi::btou_saturating(black_box(b"123456789"))));
+    b.iter(|| assert_eq!(Ok(123456789u32), btoi::btou_saturating(black_box(b"123456789"))));
 }
 
 fn bench_small_btou(b: &mut Bencher) {
@@ -17,11 +17,11 @@ fn bench_small_btou(b: &mut Bencher) {
 }
 
 fn bench_small_btou_saturating(b: &mut Bencher) {
-    b.iter(|| assert_eq!(Some(255u8), btoi::btou_saturating(black_box(b"256"))));
+    b.iter(|| assert_eq!(Ok(255u8), btoi::btou_saturating(black_box(b"256"))));
 }
 
 fn bench_btoi(b: &mut Bencher) {
-    b.iter(|| assert_eq!(Some(-123456789i32), btoi::btoi(black_box(b"-123456789"))));
+    b.iter(|| assert_eq!(Ok(-123456789i32), btoi::btoi(black_box(b"-123456789"))));
 }
 
 fn bench_from_str(b: &mut Bencher) {

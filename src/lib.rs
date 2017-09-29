@@ -6,7 +6,7 @@ extern crate num_traits;
 use num_traits::{FromPrimitive, Zero, CheckedAdd, CheckedMul};
 
 fn ascii_to_digit<I: FromPrimitive>(ch: u8, radix: u8) -> Option<I> {
-    assert!(radix >= 2 && radix <= 36,
+    assert!(2 <= radix && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);
 
     match ch {
@@ -17,20 +17,22 @@ fn ascii_to_digit<I: FromPrimitive>(ch: u8, radix: u8) -> Option<I> {
     }
 }
 
-pub fn btou<I: FromPrimitive + Zero + CheckedAdd + CheckedMul>(bytes: &[u8]) -> Option<I> {
+pub fn btou_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
+    where I: FromPrimitive + Zero + CheckedAdd + CheckedMul
+{
     if bytes.is_empty() {
         return None;
     }
 
     let mut result = I::zero();
-    let radix = I::from_u8(10).expect("radix can be represented in integer");
+    let base = I::from_u8(radix).expect("radix can be represented as integer");
 
     for &digit in bytes {
-        let x = match ascii_to_digit(digit, 10) {
+        let x = match ascii_to_digit(digit, radix) {
             Some(x) => x,
             None => return None,
         };
-        result = match result.checked_mul(&radix) {
+        result = match result.checked_mul(&base) {
             Some(result) => result,
             None => return None,
         };
@@ -41,6 +43,12 @@ pub fn btou<I: FromPrimitive + Zero + CheckedAdd + CheckedMul>(bytes: &[u8]) -> 
     }
 
     Some(result)
+}
+
+pub fn btou<I>(bytes: &[u8]) -> Option<I>
+    where I: FromPrimitive + Zero + CheckedAdd + CheckedMul
+{
+    btou_radix(bytes, 10)
 }
 
 #[cfg(test)]

@@ -5,11 +5,11 @@ extern crate btoi;
 use bencher::{Bencher, black_box};
 
 fn bench_btou(b: &mut Bencher) {
-    b.iter(|| assert_eq!(Ok(123456789u32), btoi::btou(black_box(b"123456789"))));
+    b.iter(|| assert_eq!(Ok(123_456_789u32), btoi::btou(black_box(b"123456789"))));
 }
 
 fn bench_btou_saturating(b: &mut Bencher) {
-    b.iter(|| assert_eq!(Ok(123456789u32), btoi::btou_saturating(black_box(b"123456789"))));
+    b.iter(|| assert_eq!(Ok(123_456_789u32), btoi::btou_saturating(black_box(b"123456789"))));
 }
 
 fn bench_small_btou(b: &mut Bencher) {
@@ -21,7 +21,7 @@ fn bench_small_btou_saturating(b: &mut Bencher) {
 }
 
 fn bench_btoi(b: &mut Bencher) {
-    b.iter(|| assert_eq!(Ok(-123456789i32), btoi::btoi(black_box(b"-123456789"))));
+    b.iter(|| assert_eq!(Ok(-123_456_789i32), btoi::btoi(black_box(b"-123456789"))));
 }
 
 fn bench_from_str(b: &mut Bencher) {
@@ -29,7 +29,7 @@ fn bench_from_str(b: &mut Bencher) {
         ::std::str::from_utf8(s).ok().and_then(|s| s.parse().ok())
     }
 
-    b.iter(|| assert_eq!(Some(123456789), btou_from_str(black_box(b"123456789"))));
+    b.iter(|| assert_eq!(Some(123_456_789), btou_from_str(black_box(b"123456789"))));
 }
 
 fn bench_from_str_unchecked(b: &mut Bencher) {
@@ -37,7 +37,7 @@ fn bench_from_str_unchecked(b: &mut Bencher) {
         ::std::str::from_utf8_unchecked(s).parse().ok()
     }
 
-    b.iter(|| assert_eq!(Some(123456789), unsafe { btou_from_str_unchecked(black_box(b"123456789")) }));
+    b.iter(|| assert_eq!(Some(123_456_789), unsafe { btou_from_str_unchecked(black_box(b"123456789")) }));
 }
 
 fn bench_small_from_str(b: &mut Bencher) {

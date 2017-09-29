@@ -252,6 +252,11 @@ pub fn btoi_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
 /// assert_eq!(Ok(123), btoi(b"123"));
 /// assert_eq!(Ok(123), btoi(b"+123"));
 /// assert_eq!(Ok(-123), btoi(b"-123"));
+///
+/// assert!(btoi::<i16>(b"123456789").is_err()); // overflow
+/// assert!(btoi::<u32>(b"-1").is_err()); // underflow
+///
+/// assert!(btoi::<i32>(b" 42").is_err()); // leading space
 /// ```
 ///
 /// [`btou`]: fn.btou.html

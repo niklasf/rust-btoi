@@ -236,7 +236,8 @@ pub fn btoi_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
 /// Returns [`ParseIntegerError`] for any of the following conditions:
 ///
 /// * `bytes` has no digits
-/// * not all characters of bytes are `0-9`, excluding an optional leading sign
+/// * not all characters of `bytes` are `0-9`, excluding an optional leading
+///   sign
 /// * the number overflows or underflows `I`
 ///
 /// # Panics
@@ -357,7 +358,7 @@ pub fn btou_saturating<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
 /// Returns [`ParseIntegerError`] for any of the following conditions:
 ///
 /// * `bytes` has no digits
-/// * not all characters of bytes are `0-9`, `a-z`, `A-Z`, excluding an
+/// * not all characters of `bytes` are `0-9`, `a-z`, `A-Z`, excluding an
 ///   optional leading sign
 /// * not all characters refer to digits in the given `radix`, excluding an
 ///   optional leading sign
@@ -413,6 +414,38 @@ pub fn btoi_saturating_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseInteg
     Ok(result)
 }
 
+/// Converts a byte slice to the closest possible integer.
+///
+/// Like [`btou_saturating`], but numbers may optionally start with a sign
+/// (`-` or `+`).
+///
+/// # Errors
+///
+/// Returns [`ParseIntegerError`] for any of the following conditions:
+///
+/// * `bytes` has no digits
+/// * not all characters of `bytes` are `0-9`, excluding an optional leading
+///   sign
+///
+/// # Panics
+///
+/// Panics in the pathological case that there is no representation of `10`
+/// in `I`.
+///
+/// # Examples
+///
+/// ```
+/// # use btoi::btoi_saturating;
+/// assert_eq!(Ok(127), btoi_saturating::<i8>(b"127"));
+/// assert_eq!(Ok(127), btoi_saturating::<i8>(b"128")); // i8 saturated
+/// assert_eq!(Ok(127), btoi_saturating::<i8>(b"+1024")); // i8 saturated
+/// assert_eq!(Ok(-128), btoi_saturating::<i8>(b"-128"));
+/// assert_eq!(Ok(-128), btoi_saturating::<i8>(b"-129")); // i8 saturated
+///
+/// assert_eq!(Ok(0), btoi_saturating::<u32>(b"-123")); // unsigned integer saturated
+///
+/// [`btou_saturating`]: fn.btou_saturating.html
+/// [`ParseIntegerError`]: struct.ParseIntegerError.html
 pub fn btoi_saturating<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
     where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
 {

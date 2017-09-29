@@ -3,6 +3,9 @@
 extern crate quickcheck;
 extern crate num_traits;
 
+use std::fmt;
+use std::error::Error;
+
 use num_traits::{
     FromPrimitive,
     Zero,
@@ -24,11 +27,47 @@ fn ascii_to_digit<I>(ch: u8, radix: u8) -> Option<I>
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ParseIntegerError {
+    kind: ErrorKind,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum ErrorKind {
+    Empty,
+    InvalidDigit,
+    Overflow,
+    Underflow,
+}
+
+impl ParseIntegerError {
+    fn desc(&self) -> &str {
+        match self.kind {
+            ErrorKind::Empty => "cannot parse integer from empty slice",
+            ErrorKind::InvalidDigit => "invalid digit found in slice",
+            ErrorKind::Overflow => "number too large to fit in target type",
+            ErrorKind::Underflow => "number too small to fit in target type",
+        }
+    }
+}
+
+impl fmt::Display for ParseIntegerError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.desc().fmt(f)
+    }
+}
+
+impl Error for ParseIntegerError {
+    fn description(&self) -> &str {
+        self.desc()
+    }
+}
+
 /// Converts a byte slice in a given base to an integer.
 ///
 /// # Errors
 ///
-/// Returns `None` for any of the following conditions:
+/// Returns [`ParseIntegerError`] for any of the following conditions:
 ///
 /// * `bytes` is empty
 /// * not all characters of `bytes` are `0-9`, `a-z` or `A-Z`
@@ -44,41 +83,44 @@ fn ascii_to_digit<I>(ch: u8, radix: u8) -> Option<I>
 ///
 /// ```
 /// # use btoi::btou_radix;
-/// assert_eq!(Some(255), btou_radix(b"ff", 16));
-/// assert_eq!(Some(42), btou_radix(b"101010", 2));
+/// assert_eq!(Ok(255), btou_radix(b"ff", 16));
+/// assert_eq!(Ok(42), btou_radix(b"101010", 2));
 /// ```
-pub fn btou_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
+///
+/// [`ParseIntegerError`]: struct.ParseIntegerError.html
+pub fn btou_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
     where I: FromPrimitive + Zero + CheckedAdd + CheckedMul
 {
     assert!(2 <= radix && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);
 
+    let base = I::from_u8(radix).expect("radix can be represented as integer");
+
     if bytes.is_empty() {
-        return None;
+        return Err(ParseIntegerError { kind: ErrorKind::Empty });
     }
 
     let mut result = I::zero();
-    let base = I::from_u8(radix).expect("radix can be represented as integer");
 
     for &digit in bytes {
         let x = match ascii_to_digit(digit, radix) {
             Some(x) => x,
-            None => return None,
+            None => return Err(ParseIntegerError { kind: ErrorKind::InvalidDigit }),
         };
         result = match result.checked_mul(&base) {
             Some(result) => result,
-            None => return None,
+            None => return Err(ParseIntegerError { kind: ErrorKind::Overflow }),
         };
         result = match result.checked_add(&x) {
             Some(result) => result,
-            None => return None,
+            None => return Err(ParseIntegerError { kind: ErrorKind::Overflow }),
         };
     }
 
-    Some(result)
+    Ok(result)
 }
 
-pub fn btou<I>(bytes: &[u8]) -> Option<I>
+pub fn btou<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
     where I: FromPrimitive + Zero + CheckedAdd + CheckedMul
 {
     btou_radix(bytes, 10)
@@ -95,9 +137,9 @@ pub fn btoi_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
     }
 
     let digits = match bytes[0] {
-        b'+' => return btou_radix(&bytes[1..], radix),
+        b'+' => return btou_radix(&bytes[1..], radix).ok(),
         b'-' => &bytes[1..],
-        _ => return btou_radix(bytes, radix),
+        _ => return btou_radix(bytes, radix).ok(),
     };
 
     let mut result = I::zero();
@@ -207,23 +249,23 @@ mod tests {
 
     quickcheck! {
         fn btou_identity(n: u32) -> bool {
-            Some(n) == btou(n.to_string().as_bytes())
+            Ok(n) == btou(n.to_string().as_bytes())
         }
 
         fn btou_binary_identity(n: u64) -> bool {
-            Some(n) == btou_radix(format!("{:b}", n).as_bytes(), 2)
+            Ok(n) == btou_radix(format!("{:b}", n).as_bytes(), 2)
         }
 
         fn btou_octal_identity(n: u64) -> bool {
-            Some(n) == btou_radix(format!("{:o}", n).as_bytes(), 8)
+            Ok(n) == btou_radix(format!("{:o}", n).as_bytes(), 8)
         }
 
         fn btou_lower_hex_identity(n: u64) -> bool {
-            Some(n) == btou_radix(format!("{:x}", n).as_bytes(), 16)
+            Ok(n) == btou_radix(format!("{:x}", n).as_bytes(), 16)
         }
 
         fn btou_upper_hex_identity(n: u64) -> bool {
-            Some(n) == btou_radix(format!("{:X}", n).as_bytes(), 16)
+            Ok(n) == btou_radix(format!("{:X}", n).as_bytes(), 16)
         }
 
         fn btoi_identity(n: i32) -> bool {

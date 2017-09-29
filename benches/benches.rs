@@ -5,7 +5,7 @@ extern crate btoi;
 use bencher::{Bencher, black_box};
 
 fn bench_btou(b: &mut Bencher) {
-    b.iter(|| assert_eq!(Some(123456789u32), btoi::btou(black_box(b"123456789"))));
+    b.iter(|| assert_eq!(Ok(123456789u32), btoi::btou(black_box(b"123456789"))));
 }
 
 fn bench_btou_saturating(b: &mut Bencher) {
@@ -13,7 +13,7 @@ fn bench_btou_saturating(b: &mut Bencher) {
 }
 
 fn bench_small_btou(b: &mut Bencher) {
-    b.iter(|| assert_eq!(Some(42u8), btoi::btou(black_box(b"42"))));
+    b.iter(|| assert_eq!(Ok(42u8), btoi::btou(black_box(b"42"))));
 }
 
 fn bench_small_btou_saturating(b: &mut Bencher) {

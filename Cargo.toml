@@ -11,6 +11,10 @@ documentation = "https://docs.rs/btoi"
 categories = ["parsing"]
 description = "Parse integers from byte slices"
 
+[[bench]]
+name = "benches"
+harness = false
+
 [badges]
 travis-ci = { repository = "niklasf/rust-btoi" }
 

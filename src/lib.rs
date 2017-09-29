@@ -3,7 +3,7 @@
 extern crate quickcheck;
 extern crate num_traits;
 
-use num_traits::{FromPrimitive, Zero, CheckedAdd, CheckedMul};
+use num_traits::{FromPrimitive, Zero, CheckedAdd, CheckedSub, CheckedMul};
 
 fn ascii_to_digit<I: FromPrimitive>(ch: u8, radix: u8) -> Option<I> {
     assert!(2 <= radix && radix <= 36,
@@ -51,6 +51,18 @@ pub fn btou<I>(bytes: &[u8]) -> Option<I>
     btou_radix(bytes, 10)
 }
 
+pub fn btoi_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
+    where I: FromPrimitive + Zero + CheckedAdd + CheckedSub + CheckedMul
+{
+    btou_radix(bytes, radix)
+}
+
+pub fn btoi<I>(bytes: &[u8]) -> Option<I>
+    where I: FromPrimitive + Zero + CheckedAdd + CheckedSub + CheckedMul
+{
+    btoi_radix(bytes, 10)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -58,6 +70,10 @@ mod tests {
     quickcheck! {
         fn btou_identity(n: u32) -> bool {
             Some(n) == btou(n.to_string().as_bytes())
+        }
+
+        fn btoi_identity(n: i32) -> bool {
+            Some(n) == btoi(n.to_string().as_bytes())
         }
     }
 }

@@ -347,6 +347,37 @@ pub fn btou_saturating<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
     btou_saturating_radix(bytes, 10)
 }
 
+/// Converts a byte slice in a given base to the closest possible integer.
+///
+/// Like [`btou_saturating_radix`], but numbers may optionally start with a
+/// sign (`-` or `+`).
+///
+/// # Errors
+///
+/// Returns [`ParseIntegerError`] for any of the following conditions:
+///
+/// * `bytes` has no digits
+/// * not all characters of bytes are `0-9`, `a-z`, `A-Z`, excluding an
+///   optional leading sign
+/// * not all characters refer to digits in the given `radix`, excluding an
+///   optional leading sign
+///
+/// # Panics
+///
+/// Panics if `radix` is not in the range `2..=36` (or in the pathological
+/// case that there is no representation of `radix` in `I`).
+///
+/// # Examples
+///
+/// ```
+/// # use btoi::btoi_saturating_radix;
+/// assert_eq!(Ok(127), btoi_saturating_radix::<i8>(b"7f", 16));
+/// assert_eq!(Ok(127), btoi_saturating_radix::<i8>(b"ff", 16)); // no overflow
+/// assert_eq!(Ok(-128), btoi_saturating_radix::<i8>(b"-ff", 16)); // no underflow
+/// ```
+///
+/// [`btou_saturating_radix`]: fn.btou_saturating_radix.html
+/// [`ParseIntegerError`]: struct.ParseIntegerError.html
 pub fn btoi_saturating_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
     where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
 {

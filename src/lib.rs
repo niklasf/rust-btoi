@@ -44,7 +44,7 @@ enum ErrorKind {
 impl ParseIntegerError {
     fn desc(&self) -> &str {
         match self.kind {
-            ErrorKind::Empty => "cannot parse integer from empty slice",
+            ErrorKind::Empty => "cannot parse integer without digits",
             ErrorKind::InvalidDigit => "invalid digit found in slice",
             ErrorKind::Overflow => "number too large to fit in target type",
             ErrorKind::Underflow => "number too small to fit in target type",
@@ -161,7 +161,7 @@ pub fn btou<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
 ///
 /// Returns [`ParseIntegerError`] for any of the following conditions:
 ///
-/// * `bytes` is empty
+/// * `bytes` has no digits
 /// * not all characters of `bytes` are `0-9`, `a-z`, `A-Z`, exluding an
 ///   optional leading sign
 /// * not all characters refer to digits in the given `radix`, exluding an
@@ -173,9 +173,18 @@ pub fn btou<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
 /// Panics if `radix` is not in the range `2..=36` (or in the pathological
 /// case that there is no representation of `radix` in `I`).
 ///
+/// # Examples
+///
+/// ```
+/// # use btoi::btoi_radix;
+/// assert_eq!(Ok(10), btoi_radix(b"a", 16));
+/// assert_eq!(Ok(10), btoi_radix(b"+a", 16));
+/// assert_eq!(Ok(-42), btoi_radix(b"-101010", 2));
+/// ```
+///
 /// [`btou_radix`]: fn.btou_radix.html
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
-pub fn btoi_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
+pub fn btoi_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
     where I: FromPrimitive + Zero + CheckedAdd + CheckedSub + CheckedMul
 {
     assert!(2 <= radix && radix <= 36,
@@ -184,13 +193,13 @@ pub fn btoi_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
     let base = I::from_u8(radix).expect("radix can be represented as integer");
 
     if bytes.is_empty() {
-        return None;
+        return Err(ParseIntegerError { kind: ErrorKind::Empty });
     }
 
     let digits = match bytes[0] {
-        b'+' => return btou_radix(&bytes[1..], radix).ok(),
+        b'+' => return btou_radix(&bytes[1..], radix),
         b'-' => &bytes[1..],
-        _ => return btou_radix(bytes, radix).ok(),
+        _ => return btou_radix(bytes, radix),
     };
 
     let mut result = I::zero();
@@ -198,22 +207,22 @@ pub fn btoi_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
     for &digit in digits {
         let x = match ascii_to_digit(digit, radix) {
             Some(x) => x,
-            None => return None,
+            None => return Err(ParseIntegerError { kind: ErrorKind::InvalidDigit }),
         };
         result = match result.checked_mul(&base) {
             Some(result) => result,
-            None => return None,
+            None => return Err(ParseIntegerError { kind: ErrorKind::Underflow }),
         };
         result = match result.checked_sub(&x) {
             Some(result) => result,
-            None => return None,
+            None => return Err(ParseIntegerError { kind: ErrorKind::Underflow }),
         };
     }
 
-    Some(result)
+    Ok(result)
 }
 
-pub fn btoi<I>(bytes: &[u8]) -> Option<I>
+pub fn btoi<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
     where I: FromPrimitive + Zero + CheckedAdd + CheckedSub + CheckedMul
 {
     btoi_radix(bytes, 10)
@@ -319,7 +328,7 @@ mod tests {
         }
 
         fn btoi_identity(n: i32) -> bool {
-            Some(n) == btoi(n.to_string().as_bytes())
+            Ok(n) == btoi(n.to_string().as_bytes())
         }
 
         fn btou_saturating_identity(n: u32) -> bool {

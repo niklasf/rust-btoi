@@ -316,6 +316,31 @@ pub fn btou_saturating_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseInteg
     Ok(result)
 }
 
+/// Converts a byte slice to the closest possible integer.
+/// Signs are not allowed.
+///
+/// # Errors
+///
+/// Returns [`ParseIntegerError`] for any of the following conditions:
+///
+/// * `bytes` is empty
+/// * not all characters of `bytes` are `0-9`
+///
+/// # Panics
+///
+/// Panics in the pathological case that there is no representation of `10`
+/// in `I`.
+///
+/// # Examples
+///
+/// ```
+/// # use btoi::btou_saturating;
+/// assert_eq!(Ok(65535), btou_saturating::<u16>(b"65535"));
+/// assert_eq!(Ok(65535), btou_saturating::<u16>(b"65536")); // u16 saturated
+/// assert_eq!(Ok(65535), btou_saturating::<u16>(b"65537")); // u16 saturated
+/// ```
+///
+/// [`ParseIntegerError`]: struct.ParseIntegerError.html
 pub fn btou_saturating<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
     where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
 {

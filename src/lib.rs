@@ -24,6 +24,29 @@ fn ascii_to_digit<I>(ch: u8, radix: u8) -> Option<I>
     }
 }
 
+/// Converts a byte slice in a given base to an integer.
+///
+/// # Errors
+///
+/// Returns `None` for any of the following conditions:
+///
+/// * `bytes` is empty
+/// * not all characters of `bytes` are `0-9`, `a-z` or `A-Z`
+/// * not all characters refer to digits in the given `radix`
+/// * the number overflows `I`
+///
+/// # Panics
+///
+/// Panics if `radix` is not in the range `2..=36` (or in the pathological
+/// case that there is no representation of `radix` in `I`).
+///
+/// # Examples
+///
+/// ```
+/// # use btoi::btou_radix;
+/// assert_eq!(Some(255), btou_radix(b"ff", 16));
+/// assert_eq!(Some(42), btou_radix(b"101010", 2));
+/// ```
 pub fn btou_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
     where I: FromPrimitive + Zero + CheckedAdd + CheckedMul
 {

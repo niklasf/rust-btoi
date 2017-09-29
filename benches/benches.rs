@@ -65,7 +65,6 @@ benchmark_group!(benches,
     bench_small_btou,
     bench_small_btou_saturating,
     bench_small_from_str,
-    bench_small_from_str_unchecked
-);
+    bench_small_from_str_unchecked);
 
 benchmark_main!(benches);

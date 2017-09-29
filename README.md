@@ -24,7 +24,14 @@ Documentation
 
 [Read the documentation](https://docs.rs/btoi)
 
+Changelog
+---------
+
+* 0.1.0
+  - Initial release.
+
 License
 -------
 
-btoi is dual licensed under the Apache 2.0 and MIT license.
+btoi is dual licensed under the [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+and [MIT](http://opensource.org/licenses/MIT) license, at your option.

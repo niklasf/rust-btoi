@@ -27,6 +27,7 @@ fn ascii_to_digit<I>(ch: u8, radix: u8) -> Option<I>
     }
 }
 
+/// An error that can occur when parsing an integer.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ParseIntegerError {
     kind: ErrorKind,
@@ -63,7 +64,7 @@ impl Error for ParseIntegerError {
     }
 }
 
-/// Converts a byte slice in a given base to an integer.
+/// Converts a byte slice in a given base to an integer. Signs are not allowed.
 ///
 /// # Errors
 ///
@@ -120,17 +121,67 @@ pub fn btou_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
     Ok(result)
 }
 
+/// Converts a byte slice to an integer. Signs are not allowed.
+///
+/// # Errors
+///
+/// Returns [`ParseIntegerError`] for any of the following conditions:
+///
+/// * `bytes` is empty
+/// * not all characters of `bytes` are `0-9`
+/// * the number overflows `I`
+///
+/// # Panics
+///
+/// Panics in the pathological case that there is no representation of `10`
+/// in `I`.
+///
+/// # Examples
+///
+/// ```
+/// # use btoi::btou;
+/// assert_eq!(Ok(12345), btou(b"12345"));
+/// assert!(btou::<u8>(b"+1").is_err()); // only btoi allows signs
+/// assert!(btou::<u8>(b"256").is_err()); // overflow
+/// ```
+///
+/// [`ParseIntegerError`]: struct.ParseIntegerError.html
 pub fn btou<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
     where I: FromPrimitive + Zero + CheckedAdd + CheckedMul
 {
     btou_radix(bytes, 10)
 }
 
+/// Converts a byte slice in a given base to an integer.
+///
+/// Like [`btou_radix`], but numbers may optionally start with a sign
+/// (`-` or `+`).
+///
+/// # Errors
+///
+/// Returns [`ParseIntegerError`] for any of the following conditions:
+///
+/// * `bytes` is empty
+/// * not all characters of `bytes` are `0-9`, `a-z`, `A-Z`, exluding an
+///   optional leading sign
+/// * not all characters refer to digits in the given `radix`, exluding an
+///   optional leading sign
+/// * the number overflows or underflows `I`
+///
+/// # Panics
+///
+/// Panics if `radix` is not in the range `2..=36` (or in the pathological
+/// case that there is no representation of `radix` in `I`).
+///
+/// [`btou_radix`]: fn.btou_radix.html
+/// [`ParseIntegerError`]: struct.ParseIntegerError.html
 pub fn btoi_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
     where I: FromPrimitive + Zero + CheckedAdd + CheckedSub + CheckedMul
 {
     assert!(2 <= radix && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);
+
+    let base = I::from_u8(radix).expect("radix can be represented as integer");
 
     if bytes.is_empty() {
         return None;
@@ -143,7 +194,6 @@ pub fn btoi_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
     };
 
     let mut result = I::zero();
-    let base = I::from_u8(radix).expect("radix can be represented as integer");
 
     for &digit in digits {
         let x = match ascii_to_digit(digit, radix) {

@@ -187,6 +187,22 @@ mod tests {
             Some(n) == btou(n.to_string().as_bytes())
         }
 
+        fn btou_binary_identity(n: u64) -> bool {
+            Some(n) == btou_radix(format!("{:b}", n).as_bytes(), 2)
+        }
+
+        fn btou_octal_identity(n: u64) -> bool {
+            Some(n) == btou_radix(format!("{:o}", n).as_bytes(), 8)
+        }
+
+        fn btou_lower_hex_identity(n: u64) -> bool {
+            Some(n) == btou_radix(format!("{:x}", n).as_bytes(), 16)
+        }
+
+        fn btou_upper_hex_identity(n: u64) -> bool {
+            Some(n) == btou_radix(format!("{:X}", n).as_bytes(), 16)
+        }
+
         fn btoi_identity(n: i32) -> bool {
             Some(n) == btoi(n.to_string().as_bytes())
         }

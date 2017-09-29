@@ -5,7 +5,6 @@ extern crate num_traits;
 
 use num_traits::{FromPrimitive, Zero, CheckedAdd, CheckedMul};
 
-#[inline]
 fn ascii_to_digit<I: FromPrimitive>(ch: u8, radix: u8) -> Option<I> {
     assert!(radix >= 2 && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);

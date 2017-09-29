@@ -28,6 +28,11 @@ fn ascii_to_digit<I>(ch: u8, radix: u8) -> Option<I>
 }
 
 /// An error that can occur when parsing an integer.
+///
+/// * No digits
+/// * Invalid digit
+/// * Overflow
+/// * Underflow
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ParseIntegerError {
     kind: ErrorKind,
@@ -256,48 +261,77 @@ pub fn btoi<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
     btoi_radix(bytes, 10)
 }
 
-pub fn btou_saturating_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
+/// Converts a byte slice in a given base to the closest possible integer.
+/// Signs are not allowed.
+///
+/// # Errors
+///
+/// Returns [`ParseIntegerError`] for any of the following conditions:
+///
+/// * `bytes` is empty
+/// * not all characters of `bytes` are `0-9`, `a-z`, `A-Z`
+/// * not all characters refer to digits in the given `radix`
+///
+/// # Panics
+///
+/// Panics if `radix` is not in the range `2..=36` (or in the pathological
+/// case that there is no representation of `radix` in `I`).
+///
+/// # Examples
+///
+/// ```
+/// # use btoi::btou_saturating_radix;
+/// assert_eq!(Ok(255), btou_saturating_radix::<u8>(b"00ff", 16));
+/// assert_eq!(Ok(255), btou_saturating_radix::<u8>(b"0100", 16)); // u8 saturated
+/// assert_eq!(Ok(255), btou_saturating_radix::<u8>(b"0101", 16)); // u8 saturated
+/// ```
+///
+/// [`ParseIntegerError`]: struct.ParseIntegerError.html
+pub fn btou_saturating_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
     where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
 {
     assert!(2 <= radix && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);
 
+    let base = I::from_u8(radix).expect("radix can be represented as integer");
+
     if bytes.is_empty() {
-        return None;
+        return Err(ParseIntegerError { kind: ErrorKind::Empty });
     }
 
     let mut result = I::zero();
-    let base = I::from_u8(radix).expect("radix can be represented as integer");
 
     for &digit in bytes {
         let x = match ascii_to_digit(digit, radix) {
             Some(x) => x,
-            None => return None,
+            None => return Err(ParseIntegerError { kind: ErrorKind::InvalidDigit }),
         };
         result = match result.checked_mul(&base) {
             Some(result) => result,
-            None => return Some(I::max_value()),
+            None => return Ok(I::max_value()),
         };
         result = result.saturating_add(x);
     }
 
-    Some(result)
+    Ok(result)
 }
 
-pub fn btou_saturating<I>(bytes: &[u8]) -> Option<I>
+pub fn btou_saturating<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
     where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
 {
     btou_saturating_radix(bytes, 10)
 }
 
-pub fn btoi_saturating_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
+pub fn btoi_saturating_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
     where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
 {
     assert!(2 <= radix && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);
 
+    let base = I::from_u8(radix).expect("radix can be represented as integer");
+
     if bytes.is_empty() {
-        return None;
+        return Err(ParseIntegerError { kind: ErrorKind::Empty });
     }
 
     let digits = match bytes[0] {
@@ -307,24 +341,23 @@ pub fn btoi_saturating_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
     };
 
     let mut result = I::zero();
-    let base = I::from_u8(radix).expect("radix can be represented as integer");
 
     for &digit in digits {
         let x = match ascii_to_digit(digit, radix) {
             Some(x) => x,
-            None => return None,
+            None => return Err(ParseIntegerError { kind: ErrorKind::InvalidDigit }),
         };
         result = match result.checked_mul(&base) {
             Some(result) => result,
-            None => return Some(I::min_value()),
+            None => return Ok(I::min_value()),
         };
         result = result.saturating_sub(x);
     }
 
-    Some(result)
+    Ok(result)
 }
 
-pub fn btoi_saturating<I>(bytes: &[u8]) -> Option<I>
+pub fn btoi_saturating<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
     where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
 {
     btoi_saturating_radix(bytes, 10)
@@ -360,11 +393,11 @@ mod tests {
         }
 
         fn btou_saturating_identity(n: u32) -> bool {
-            Some(n) == btou_saturating(n.to_string().as_bytes())
+            Ok(n) == btou_saturating(n.to_string().as_bytes())
         }
 
         fn btoi_saturating_identity(n: i32) -> bool {
-            Some(n) == btoi_saturating(n.to_string().as_bytes())
+            Ok(n) == btoi_saturating(n.to_string().as_bytes())
         }
     }
 }

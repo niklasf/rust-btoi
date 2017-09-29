@@ -9,7 +9,7 @@ fn bench_btou(b: &mut Bencher) {
 }
 
 fn bench_btoi(b: &mut Bencher) {
-    b.iter(|| assert_eq!(Some(-987654321), btoi::btoi(black_box(b"-987654321"))));
+    b.iter(|| assert_eq!(Some(-12345), btoi::btoi(black_box(b"-12345"))));
 }
 
 fn bench_from_str(b: &mut Bencher) {

@@ -9,7 +9,7 @@ repository = "https://github.com/niklasf/rust-btoi"
 homepage = "https://github.com/niklasf/rust-btoi"
 documentation = "https://docs.rs/btoi"
 categories = ["parsing"]
-description = "Parse integers from byte slices"
+description = "Parse integers directly from byte slices"
 
 [[bench]]
 name = "benches"

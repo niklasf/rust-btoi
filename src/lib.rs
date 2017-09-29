@@ -16,9 +16,6 @@ use num_traits::{
 fn ascii_to_digit<I>(ch: u8, radix: u8) -> Option<I>
     where I: FromPrimitive
 {
-    assert!(2 <= radix && radix <= 36,
-            "radix must lie in the range 2..=36, found {}", radix);
-
     match ch {
         b'0' ... b'9' if ch < b'0' + radix => I::from_u8(ch - b'0'),
         b'a' ... b'z' if ch < b'a' + radix - 10 => I::from_u8(ch - b'a' + 10),
@@ -30,6 +27,9 @@ fn ascii_to_digit<I>(ch: u8, radix: u8) -> Option<I>
 pub fn btou_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
     where I: FromPrimitive + Zero + CheckedAdd + CheckedMul
 {
+    assert!(2 <= radix && radix <= 36,
+            "radix must lie in the range 2..=36, found {}", radix);
+
     if bytes.is_empty() {
         return None;
     }
@@ -64,6 +64,9 @@ pub fn btou<I>(bytes: &[u8]) -> Option<I>
 pub fn btoi_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
     where I: FromPrimitive + Zero + CheckedAdd + CheckedSub + CheckedMul
 {
+    assert!(2 <= radix && radix <= 36,
+            "radix must lie in the range 2..=36, found {}", radix);
+
     if bytes.is_empty() {
         return None;
     }
@@ -104,6 +107,9 @@ pub fn btoi<I>(bytes: &[u8]) -> Option<I>
 pub fn btou_saturating_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
     where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
 {
+    assert!(2 <= radix && radix <= 36,
+            "radix must lie in the range 2..=36, found {}", radix);
+
     if bytes.is_empty() {
         return None;
     }
@@ -135,6 +141,9 @@ pub fn btou_saturating<I>(bytes: &[u8]) -> Option<I>
 pub fn btoi_saturating_radix<I>(bytes: &[u8], radix: u8) -> Option<I>
     where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
 {
+    assert!(2 <= radix && radix <= 36,
+            "radix must lie in the range 2..=36, found {}", radix);
+
     if bytes.is_empty() {
         return None;
     }

@@ -3,7 +3,7 @@
 extern crate quickcheck;
 extern crate num_traits;
 
-use num_traits::FromPrimitive;
+use num_traits::{FromPrimitive, Zero, CheckedAdd, CheckedMul};
 
 #[inline]
 fn ascii_to_digit<I: FromPrimitive>(ch: u8, radix: u8) -> Option<I> {
@@ -18,23 +18,24 @@ fn ascii_to_digit<I: FromPrimitive>(ch: u8, radix: u8) -> Option<I> {
     }
 }
 
-pub fn btou(bytes: &[u8]) -> Option<u32> {
+pub fn btou<I: FromPrimitive + Zero + CheckedAdd + CheckedMul>(bytes: &[u8]) -> Option<I> {
     if bytes.is_empty() {
         return None;
     }
 
-    let mut result = 0u32;
+    let mut result = I::zero();
+    let radix = I::from_u8(10).expect("radix can be represented in integer");
 
     for &digit in bytes {
         let x = match ascii_to_digit(digit, 10) {
             Some(x) => x,
             None => return None,
         };
-        result = match result.checked_mul(10) {
+        result = match result.checked_mul(&radix) {
             Some(result) => result,
             None => return None,
         };
-        result = match result.checked_add(x) {
+        result = match result.checked_add(&x) {
             Some(result) => result,
             None => return None,
         };

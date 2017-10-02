@@ -48,12 +48,12 @@
 //!
 //! * The byte slice does not contain any digits.
 //! * Not all characters are `0-9`, `a-z`, `A-Z`. Leading or trailing
-//!   whitespace is not allowed. The `btoi*` functions accept on optional
+//!   whitespace is not allowed. The `btoi*` functions accept an optional
 //!   leading `+` or `-` sign. The `btou*` functions respectively do not
 //!   allow signs.
 //! * Not all digits are valid in the given radix.
-//! * The number overflows or underflows the target type, but wrapping
-//!   or saturating arithmetic is not used.
+//! * The number overflows or underflows the target type, but saturating
+//!   arithmetic is not used.
 //!
 //! # Panics
 //!

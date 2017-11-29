@@ -520,6 +520,7 @@ pub fn btoi_saturating_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseInteg
 /// assert_eq!(Ok(-128), btoi_saturating::<i8>(b"-129")); // i8 saturated
 ///
 /// assert_eq!(Ok(0), btoi_saturating::<u32>(b"-123")); // unsigned integer saturated
+/// ```
 ///
 /// [`btou_saturating`]: fn.btou_saturating.html
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html

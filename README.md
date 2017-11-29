@@ -27,6 +27,9 @@ Documentation
 Changelog
 ---------
 
+* 0.1.2
+  - Fix documentation warnings.
+  - Update dependencies.
 * 0.1.1
   - Documentation fixes.
 * 0.1.0

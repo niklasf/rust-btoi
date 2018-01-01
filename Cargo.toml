@@ -20,5 +20,5 @@ travis-ci = { repository = "niklasf/rust-btoi" }
 num-traits = "0.1"
 
 [dev-dependencies]
-quickcheck = "0.5"
+quickcheck = "0.6"
 bencher = "0.1"

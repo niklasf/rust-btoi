@@ -2,7 +2,7 @@
 extern crate bencher;
 extern crate btoi;
 
-use bencher::{Bencher, black_box};
+use bencher::{black_box, Bencher};
 
 fn bench_btou(b: &mut Bencher) {
     b.iter(|| assert_eq!(Ok(123_456_789u32), btoi::btou(black_box(b"123456789"))));

@@ -65,36 +65,29 @@
 //! [`from_str_radix`]: https://doc.rust-lang.org/std/primitive.u32.html#method.from_str_radix
 
 #![doc(html_root_url = "https://docs.rs/btoi/0.1.3")]
-
 #![deny(missing_docs)]
 #![deny(warnings)]
 #![deny(missing_debug_implementations)]
 
+extern crate num_traits;
+
 #[cfg(test)]
 #[macro_use]
 extern crate quickcheck;
-extern crate num_traits;
 
 use std::fmt;
 use std::error::Error;
 
-pub use num_traits::{
-    FromPrimitive,
-    Zero,
-    CheckedAdd,
-    CheckedSub,
-    CheckedMul,
-    Saturating,
-    Bounded,
-};
+use num_traits::{Bounded, CheckedAdd, CheckedMul, CheckedSub, FromPrimitive, Saturating, Zero};
 
 fn ascii_to_digit<I>(ch: u8, radix: u8) -> Option<I>
-    where I: FromPrimitive
+where
+    I: FromPrimitive,
 {
     match ch {
-        b'0' ... b'9' if ch < b'0' + radix => I::from_u8(ch - b'0'),
-        b'a' ... b'z' if ch < b'a' + radix - 10 => I::from_u8(ch - b'a' + 10),
-        b'A' ... b'Z' if ch < b'A' + radix - 10 => I::from_u8(ch - b'A' + 10),
+        b'0'...b'9' if ch < b'0' + radix => I::from_u8(ch - b'0'),
+        b'a'...b'z' if ch < b'a' + radix - 10 => I::from_u8(ch - b'a' + 10),
+        b'A'...b'Z' if ch < b'A' + radix - 10 => I::from_u8(ch - b'A' + 10),
         _ => None,
     }
 }
@@ -167,7 +160,8 @@ impl Error for ParseIntegerError {
 ///
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
 pub fn btou_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
-    where I: FromPrimitive + Zero + CheckedAdd + CheckedMul
+where
+    I: FromPrimitive + Zero + CheckedAdd + CheckedMul,
 {
     assert!(2 <= radix && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);
@@ -224,7 +218,8 @@ pub fn btou_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
 ///
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
 pub fn btou<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
-    where I: FromPrimitive + Zero + CheckedAdd + CheckedMul
+where
+    I: FromPrimitive + Zero + CheckedAdd + CheckedMul,
 {
     btou_radix(bytes, 10)
 }
@@ -262,7 +257,8 @@ pub fn btou<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
 /// [`btou_radix`]: fn.btou_radix.html
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
 pub fn btoi_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
-    where I: FromPrimitive + Zero + CheckedAdd + CheckedSub + CheckedMul
+where
+    I: FromPrimitive + Zero + CheckedAdd + CheckedSub + CheckedMul,
 {
     assert!(2 <= radix && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);
@@ -334,7 +330,8 @@ pub fn btoi_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
 /// [`btou`]: fn.btou.html
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
 pub fn btoi<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
-    where I: FromPrimitive + Zero + CheckedAdd + CheckedSub + CheckedMul
+where
+    I: FromPrimitive + Zero + CheckedAdd + CheckedSub + CheckedMul,
 {
     btoi_radix(bytes, 10)
 }
@@ -366,7 +363,8 @@ pub fn btoi<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
 ///
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
 pub fn btou_saturating_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
-    where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
+where
+    I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded,
 {
     assert!(2 <= radix && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);
@@ -420,7 +418,8 @@ pub fn btou_saturating_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseInteg
 ///
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
 pub fn btou_saturating<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
-    where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
+where
+    I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded,
 {
     btou_saturating_radix(bytes, 10)
 }
@@ -457,7 +456,8 @@ pub fn btou_saturating<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
 /// [`btou_saturating_radix`]: fn.btou_saturating_radix.html
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
 pub fn btoi_saturating_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
-    where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
+where
+    I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded,
 {
     assert!(2 <= radix && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);
@@ -525,7 +525,8 @@ pub fn btoi_saturating_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseInteg
 /// [`btou_saturating`]: fn.btou_saturating.html
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
 pub fn btoi_saturating<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
-    where I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded
+where
+    I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded,
 {
     btoi_saturating_radix(bytes, 10)
 }

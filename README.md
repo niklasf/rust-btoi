@@ -27,6 +27,8 @@ Documentation
 Changelog
 ---------
 
+* 0.2.0
+  - No longer reexport num-traits.
 * 0.1.3
   - Update to num-traits 0.2 (semver compatible).
 * 0.1.2

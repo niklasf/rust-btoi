@@ -12,6 +12,8 @@ Introduction
 Provides functions similar to [`from_str_radix`](https://doc.rust-lang.org/std/primitive.u32.html#method.from_str_radix),
 but is faster when parsing directly from byte slices instead of strings.
 
+Supports `#![no_std]`.
+
 ```rust
 use btoi::btoi;
 
@@ -27,6 +29,9 @@ Documentation
 Changelog
 ---------
 
+* 0.3.0
+  - Disable the `std` feature for `#![no_std]` support.
+  - Mark functions as `#[inline]`.
 * 0.2.0
   - No longer reexport num-traits.
 * 0.1.3

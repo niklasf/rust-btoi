@@ -69,13 +69,18 @@
 #![deny(warnings)]
 #![deny(missing_debug_implementations)]
 
+#![cfg_attr(not(feature = "std"), no_std)]
+
 extern crate num_traits;
 
 #[cfg(test)]
 #[macro_use]
 extern crate quickcheck;
+#[cfg(feature = "std")]
+extern crate std as core;
 
-use std::fmt;
+use core::fmt;
+#[cfg(feature = "std")]
 use std::error::Error;
 
 use num_traits::{Bounded, CheckedAdd, CheckedMul, CheckedSub, FromPrimitive, Saturating, Zero};
@@ -129,6 +134,7 @@ impl fmt::Display for ParseIntegerError {
     }
 }
 
+#[cfg(feature = "std")]
 impl Error for ParseIntegerError {
     fn description(&self) -> &str {
         self.desc()

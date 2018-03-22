@@ -30,7 +30,7 @@ Changelog
 ---------
 
 * 0.3.0
-  - Disable the `std` feature for `#![no_std]` support.
+  - New default feature `std`. Disable for `#![no_std]` support.
   - Mark functions as `#[inline]`.
 * 0.2.0
   - No longer reexport num-traits.

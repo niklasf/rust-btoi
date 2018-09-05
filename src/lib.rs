@@ -87,18 +87,6 @@ use std::error::Error;
 
 use num_traits::{Bounded, CheckedAdd, CheckedMul, CheckedSub, FromPrimitive, Saturating, Zero};
 
-fn ascii_to_digit<I>(ch: u8, radix: u8) -> Option<I>
-where
-    I: FromPrimitive,
-{
-    match ch {
-        b'0'...b'9' if ch < b'0' + radix => I::from_u8(ch - b'0'),
-        b'a'...b'z' if ch < b'a' + radix - 10 => I::from_u8(ch - b'a' + 10),
-        b'A'...b'Z' if ch < b'A' + radix - 10 => I::from_u8(ch - b'A' + 10),
-        _ => None,
-    }
-}
-
 /// An error that can occur when parsing an integer.
 ///
 /// * No digits
@@ -167,14 +155,14 @@ impl Error for ParseIntegerError {
 /// ```
 ///
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
-pub fn btou_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
+pub fn btou_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedAdd + CheckedMul,
 {
     assert!(2 <= radix && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);
 
-    let base = I::from_u8(radix).expect("radix can be represented as integer");
+    let base = I::from_u32(radix).expect("radix can be represented as integer");
 
     if bytes.is_empty() {
         return Err(ParseIntegerError { kind: ErrorKind::Empty });
@@ -183,7 +171,7 @@ where
     let mut result = I::zero();
 
     for &digit in bytes {
-        let x = match ascii_to_digit(digit, radix) {
+        let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
             Some(x) => x,
             None => return Err(ParseIntegerError { kind: ErrorKind::InvalidDigit }),
         };
@@ -264,14 +252,14 @@ where
 ///
 /// [`btou_radix`]: fn.btou_radix.html
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
-pub fn btoi_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
+pub fn btoi_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedAdd + CheckedSub + CheckedMul,
 {
     assert!(2 <= radix && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);
 
-    let base = I::from_u8(radix).expect("radix can be represented as integer");
+    let base = I::from_u32(radix).expect("radix can be represented as integer");
 
     if bytes.is_empty() {
         return Err(ParseIntegerError { kind: ErrorKind::Empty });
@@ -286,7 +274,7 @@ where
     let mut result = I::zero();
 
     for &digit in digits {
-        let x = match ascii_to_digit(digit, radix) {
+        let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
             Some(x) => x,
             None => return Err(ParseIntegerError { kind: ErrorKind::InvalidDigit }),
         };
@@ -370,14 +358,14 @@ where
 /// ```
 ///
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
-pub fn btou_saturating_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
+pub fn btou_saturating_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded,
 {
     assert!(2 <= radix && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);
 
-    let base = I::from_u8(radix).expect("radix can be represented as integer");
+    let base = I::from_u32(radix).expect("radix can be represented as integer");
 
     if bytes.is_empty() {
         return Err(ParseIntegerError { kind: ErrorKind::Empty });
@@ -386,7 +374,7 @@ where
     let mut result = I::zero();
 
     for &digit in bytes {
-        let x = match ascii_to_digit(digit, radix) {
+        let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
             Some(x) => x,
             None => return Err(ParseIntegerError { kind: ErrorKind::InvalidDigit }),
         };
@@ -463,14 +451,14 @@ where
 ///
 /// [`btou_saturating_radix`]: fn.btou_saturating_radix.html
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
-pub fn btoi_saturating_radix<I>(bytes: &[u8], radix: u8) -> Result<I, ParseIntegerError>
+pub fn btoi_saturating_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded,
 {
     assert!(2 <= radix && radix <= 36,
             "radix must lie in the range 2..=36, found {}", radix);
 
-    let base = I::from_u8(radix).expect("radix can be represented as integer");
+    let base = I::from_u32(radix).expect("radix can be represented as integer");
 
     if bytes.is_empty() {
         return Err(ParseIntegerError { kind: ErrorKind::Empty });
@@ -485,7 +473,7 @@ where
     let mut result = I::zero();
 
     for &digit in digits {
-        let x = match ascii_to_digit(digit, radix) {
+        let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
             Some(x) => x,
             None => return Err(ParseIntegerError { kind: ErrorKind::InvalidDigit }),
         };

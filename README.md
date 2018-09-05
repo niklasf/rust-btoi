@@ -33,7 +33,6 @@ Changelog
 * Upcoming
   - Change type of radix to `u32` (from `u8`) to mirror the standard library.
   - No need to `#[inline]` generic functions.
-  - Minimum Rust version is 1.20.0.
 * 0.3.0
   - New default feature `std`. Disable for `#![no_std]` support.
   - Mark functions as `#[inline]`.

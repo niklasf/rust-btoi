@@ -66,7 +66,7 @@
 //! [`ParseIntegerError`]: struct.ParseIntegerError.html
 //! [`from_str_radix`]: https://doc.rust-lang.org/std/primitive.u32.html#method.from_str_radix
 
-#![doc(html_root_url = "https://docs.rs/btoi/0.3.0")]
+#![doc(html_root_url = "https://docs.rs/btoi/0.4.0")]
 #![deny(missing_docs)]
 #![deny(warnings)]
 #![deny(missing_debug_implementations)]

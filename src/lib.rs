@@ -6,7 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Parse integers from byte slices.
+//! Parse integers from ASCII byte slices.
 //!
 //! Provides functions similar to [`from_str_radix`], but is faster when
 //! parsing directly from byte slices instead of strings.

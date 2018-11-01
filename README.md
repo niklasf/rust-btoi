@@ -1,7 +1,7 @@
 btoi
 ====
 
-Parse integers from byte slices.
+Parse integers from ASCII byte slices.
 
 [![Build Status](https://travis-ci.org/niklasf/rust-btoi.svg?branch=master)](https://travis-ci.org/niklasf/rust-btoi)
 [![crates.io](https://img.shields.io/crates/v/btoi.svg)](https://crates.io/crates/btoi)

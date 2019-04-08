@@ -30,6 +30,8 @@ Documentation
 Changelog
 ---------
 
+* 0.4.1
+  - `-` was parsed as zero, but should have errored. Thanks @wayslog.
 * 0.4.0
   - Change type of radix to `u32` (from `u8`) to mirror the standard library.
   - No need to `#[inline]` generic functions.

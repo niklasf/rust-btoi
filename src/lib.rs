@@ -271,6 +271,10 @@ where
         _ => return btou_radix(bytes, radix),
     };
 
+    if digits.is_empty() {
+        return Err(ParseIntegerError { kind: ErrorKind::Empty });
+    }
+
     let mut result = I::zero();
 
     for &digit in digits {
@@ -470,6 +474,10 @@ where
         _ => return btou_saturating_radix(bytes, radix),
     };
 
+    if digits.is_empty() {
+        return Err(ParseIntegerError { kind: ErrorKind::Empty });
+    }
+
     let mut result = I::zero();
 
     for &digit in digits {
@@ -563,5 +571,18 @@ mod tests {
         fn btoi_saturating_identity(n: i32) -> bool {
             Ok(n) == btoi_saturating(n.to_string().as_bytes())
         }
+    }
+
+    #[test]
+    fn test_lone_minus() {
+        assert!(btoi::<isize>(b"-").is_err());
+        assert!(btoi_radix::<isize>(b"-", 16).is_err());
+        assert!(btoi_saturating::<isize>(b"-").is_err());
+        assert!(btoi_saturating_radix::<isize>(b"-", 8).is_err());
+
+        assert!(btou::<isize>(b"-").is_err());
+        assert!(btou_radix::<isize>(b"-", 16).is_err());
+        assert!(btou_saturating::<isize>(b"-").is_err());
+        assert!(btou_saturating_radix::<isize>(b"-", 8).is_err());
     }
 }

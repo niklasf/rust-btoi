@@ -537,6 +537,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::str;
 
     quickcheck! {
         fn btou_identity(n: u32) -> bool {
@@ -569,6 +570,12 @@ mod tests {
 
         fn btoi_saturating_identity(n: i32) -> bool {
             Ok(n) == btoi_saturating(n.to_string().as_bytes())
+        }
+
+        fn btoi_radix_std(bytes: Vec<u8>, radix: u32) -> bool {
+            let radix = radix % 35 + 2; // panic unless 2 <= radix <= 36
+            str::from_utf8(&bytes).ok().and_then(|src| i32::from_str_radix(src, radix).ok()) ==
+                btoi_radix(&bytes, radix).ok()
         }
     }
 

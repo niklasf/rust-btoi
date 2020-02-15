@@ -68,7 +68,6 @@
 
 #![doc(html_root_url = "https://docs.rs/btoi/0.4.1")]
 #![deny(missing_docs)]
-#![deny(warnings)]
 #![deny(missing_debug_implementations)]
 
 #![cfg_attr(not(feature = "std"), no_std)]

@@ -67,6 +67,8 @@
 //! [`from_str_radix`]: https://doc.rust-lang.org/std/primitive.u32.html#method.from_str_radix
 
 #![doc(html_root_url = "https://docs.rs/btoi/0.4.1")]
+
+#![forbid(unsafe_code)]
 #![deny(missing_docs)]
 #![deny(missing_debug_implementations)]
 

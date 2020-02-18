@@ -30,6 +30,10 @@ Documentation
 Changelog
 ---------
 
+* 0.4.2
+  - No longer `!#[deny(warnings)]`, which is is a forwards compability hazard
+    in libraries.
+  - Explicit `!#[forbid(unsafe_code)]`.
 * 0.4.1
   - `-` was parsed as zero, but should have errored. Thanks @wayslog.
 * 0.4.0

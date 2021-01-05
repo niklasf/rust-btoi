@@ -160,8 +160,7 @@ pub fn btou_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedAdd + CheckedMul,
 {
-    assert!(2 <= radix && radix <= 36,
-            "radix must lie in the range 2..=36, found {}", radix);
+    assert!((2..=36).contains(&radix), "radix must lie in the range 2..=36, found {}", radix);
 
     let base = I::from_u32(radix).expect("radix can be represented as integer");
 
@@ -257,8 +256,7 @@ pub fn btoi_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedAdd + CheckedSub + CheckedMul,
 {
-    assert!(2 <= radix && radix <= 36,
-            "radix must lie in the range 2..=36, found {}", radix);
+    assert!((2..=36).contains(&radix), "radix must lie in the range 2..=36, found {}", radix);
 
     let base = I::from_u32(radix).expect("radix can be represented as integer");
 
@@ -367,8 +365,7 @@ pub fn btou_saturating_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseInte
 where
     I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded,
 {
-    assert!(2 <= radix && radix <= 36,
-            "radix must lie in the range 2..=36, found {}", radix);
+    assert!((2..=36).contains(&radix), "radix must lie in the range 2..=36, found {}", radix);
 
     let base = I::from_u32(radix).expect("radix can be represented as integer");
 
@@ -460,8 +457,7 @@ pub fn btoi_saturating_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseInte
 where
     I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded,
 {
-    assert!(2 <= radix && radix <= 36,
-            "radix must lie in the range 2..=36, found {}", radix);
+    assert!((2..=36).contains(&radix), "radix must lie in the range 2..=36, found {}", radix);
 
     let base = I::from_u32(radix).expect("radix can be represented as integer");
 

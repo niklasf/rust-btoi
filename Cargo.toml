@@ -21,7 +21,7 @@ version = "0.2"
 default-features = false
 
 [dev-dependencies]
-quickcheck = "0.9"
+quickcheck = "1.0"
 bencher = "0.1"
 
 [features]

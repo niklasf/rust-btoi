@@ -9,7 +9,12 @@ fn bench_btou(b: &mut Bencher) {
 }
 
 fn bench_btou_saturating(b: &mut Bencher) {
-    b.iter(|| assert_eq!(Ok(123_456_789u32), btoi::btou_saturating(black_box(b"123456789"))));
+    b.iter(|| {
+        assert_eq!(
+            Ok(123_456_789u32),
+            btoi::btou_saturating(black_box(b"123456789"))
+        )
+    });
 }
 
 fn bench_small_btou(b: &mut Bencher) {
@@ -37,7 +42,11 @@ fn bench_from_str_unchecked(b: &mut Bencher) {
         ::std::str::from_utf8_unchecked(s).parse().ok()
     }
 
-    b.iter(|| assert_eq!(Some(123_456_789), unsafe { btou_from_str_unchecked(black_box(b"123456789")) }));
+    b.iter(|| {
+        assert_eq!(Some(123_456_789), unsafe {
+            btou_from_str_unchecked(black_box(b"123456789"))
+        })
+    });
 }
 
 fn bench_small_from_str(b: &mut Bencher) {
@@ -53,10 +62,15 @@ fn bench_small_from_str_unchecked(b: &mut Bencher) {
         ::std::str::from_utf8_unchecked(s).parse().ok()
     }
 
-    b.iter(|| assert_eq!(Some(42u8), unsafe { btou_from_str_unchecked(black_box(b"42")) }));
+    b.iter(|| {
+        assert_eq!(Some(42u8), unsafe {
+            btou_from_str_unchecked(black_box(b"42"))
+        })
+    });
 }
 
-benchmark_group!(benches,
+benchmark_group!(
+    benches,
     bench_btou,
     bench_btou_saturating,
     bench_btoi,
@@ -65,6 +79,7 @@ benchmark_group!(benches,
     bench_small_btou,
     bench_small_btou_saturating,
     bench_small_from_str,
-    bench_small_from_str_unchecked);
+    bench_small_from_str_unchecked
+);
 
 benchmark_main!(benches);

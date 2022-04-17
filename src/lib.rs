@@ -67,11 +67,9 @@
 //! [`from_str_radix`]: https://doc.rust-lang.org/std/primitive.u32.html#method.from_str_radix
 
 #![doc(html_root_url = "https://docs.rs/btoi/0.4.2")]
-
 #![forbid(unsafe_code)]
 #![deny(missing_docs)]
 #![deny(missing_debug_implementations)]
-
 #![cfg_attr(not(feature = "std"), no_std)]
 
 extern crate num_traits;
@@ -160,12 +158,18 @@ pub fn btou_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedAdd + CheckedMul,
 {
-    assert!((2..=36).contains(&radix), "radix must lie in the range 2..=36, found {}", radix);
+    assert!(
+        (2..=36).contains(&radix),
+        "radix must lie in the range 2..=36, found {}",
+        radix
+    );
 
     let base = I::from_u32(radix).expect("radix can be represented as integer");
 
     if bytes.is_empty() {
-        return Err(ParseIntegerError { kind: ErrorKind::Empty });
+        return Err(ParseIntegerError {
+            kind: ErrorKind::Empty,
+        });
     }
 
     let mut result = I::zero();
@@ -173,15 +177,27 @@ where
     for &digit in bytes {
         let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
             Some(x) => x,
-            None => return Err(ParseIntegerError { kind: ErrorKind::InvalidDigit }),
+            None => {
+                return Err(ParseIntegerError {
+                    kind: ErrorKind::InvalidDigit,
+                })
+            }
         };
         result = match result.checked_mul(&base) {
             Some(result) => result,
-            None => return Err(ParseIntegerError { kind: ErrorKind::Overflow }),
+            None => {
+                return Err(ParseIntegerError {
+                    kind: ErrorKind::Overflow,
+                })
+            }
         };
         result = match result.checked_add(&x) {
             Some(result) => result,
-            None => return Err(ParseIntegerError { kind: ErrorKind::Overflow }),
+            None => {
+                return Err(ParseIntegerError {
+                    kind: ErrorKind::Overflow,
+                })
+            }
         };
     }
 
@@ -256,12 +272,18 @@ pub fn btoi_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedAdd + CheckedSub + CheckedMul,
 {
-    assert!((2..=36).contains(&radix), "radix must lie in the range 2..=36, found {}", radix);
+    assert!(
+        (2..=36).contains(&radix),
+        "radix must lie in the range 2..=36, found {}",
+        radix
+    );
 
     let base = I::from_u32(radix).expect("radix can be represented as integer");
 
     if bytes.is_empty() {
-        return Err(ParseIntegerError { kind: ErrorKind::Empty });
+        return Err(ParseIntegerError {
+            kind: ErrorKind::Empty,
+        });
     }
 
     let digits = match bytes[0] {
@@ -271,7 +293,9 @@ where
     };
 
     if digits.is_empty() {
-        return Err(ParseIntegerError { kind: ErrorKind::Empty });
+        return Err(ParseIntegerError {
+            kind: ErrorKind::Empty,
+        });
     }
 
     let mut result = I::zero();
@@ -279,15 +303,27 @@ where
     for &digit in digits {
         let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
             Some(x) => x,
-            None => return Err(ParseIntegerError { kind: ErrorKind::InvalidDigit }),
+            None => {
+                return Err(ParseIntegerError {
+                    kind: ErrorKind::InvalidDigit,
+                })
+            }
         };
         result = match result.checked_mul(&base) {
             Some(result) => result,
-            None => return Err(ParseIntegerError { kind: ErrorKind::Underflow }),
+            None => {
+                return Err(ParseIntegerError {
+                    kind: ErrorKind::Underflow,
+                })
+            }
         };
         result = match result.checked_sub(&x) {
             Some(result) => result,
-            None => return Err(ParseIntegerError { kind: ErrorKind::Underflow }),
+            None => {
+                return Err(ParseIntegerError {
+                    kind: ErrorKind::Underflow,
+                })
+            }
         };
     }
 
@@ -365,12 +401,18 @@ pub fn btou_saturating_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseInte
 where
     I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded,
 {
-    assert!((2..=36).contains(&radix), "radix must lie in the range 2..=36, found {}", radix);
+    assert!(
+        (2..=36).contains(&radix),
+        "radix must lie in the range 2..=36, found {}",
+        radix
+    );
 
     let base = I::from_u32(radix).expect("radix can be represented as integer");
 
     if bytes.is_empty() {
-        return Err(ParseIntegerError { kind: ErrorKind::Empty });
+        return Err(ParseIntegerError {
+            kind: ErrorKind::Empty,
+        });
     }
 
     let mut result = I::zero();
@@ -378,7 +420,11 @@ where
     for &digit in bytes {
         let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
             Some(x) => x,
-            None => return Err(ParseIntegerError { kind: ErrorKind::InvalidDigit }),
+            None => {
+                return Err(ParseIntegerError {
+                    kind: ErrorKind::InvalidDigit,
+                })
+            }
         };
         result = match result.checked_mul(&base) {
             Some(result) => result,
@@ -457,12 +503,18 @@ pub fn btoi_saturating_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseInte
 where
     I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded,
 {
-    assert!((2..=36).contains(&radix), "radix must lie in the range 2..=36, found {}", radix);
+    assert!(
+        (2..=36).contains(&radix),
+        "radix must lie in the range 2..=36, found {}",
+        radix
+    );
 
     let base = I::from_u32(radix).expect("radix can be represented as integer");
 
     if bytes.is_empty() {
-        return Err(ParseIntegerError { kind: ErrorKind::Empty });
+        return Err(ParseIntegerError {
+            kind: ErrorKind::Empty,
+        });
     }
 
     let digits = match bytes[0] {
@@ -472,7 +524,9 @@ where
     };
 
     if digits.is_empty() {
-        return Err(ParseIntegerError { kind: ErrorKind::Empty });
+        return Err(ParseIntegerError {
+            kind: ErrorKind::Empty,
+        });
     }
 
     let mut result = I::zero();
@@ -480,7 +534,11 @@ where
     for &digit in digits {
         let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
             Some(x) => x,
-            None => return Err(ParseIntegerError { kind: ErrorKind::InvalidDigit }),
+            None => {
+                return Err(ParseIntegerError {
+                    kind: ErrorKind::InvalidDigit,
+                })
+            }
         };
         result = match result.checked_mul(&base) {
             Some(result) => result,
@@ -534,8 +592,9 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use std::str;
+
+    use super::*;
 
     quickcheck! {
         fn btou_identity(n: u32) -> bool {

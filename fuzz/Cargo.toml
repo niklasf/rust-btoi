@@ -2,15 +2,17 @@
 name = "btoi-fuzz"
 version = "0.0.0"
 publish = false
+edition = "2021"
 
 [package.metadata]
 cargo-fuzz = true
 
-[dependencies.btoi]
-path = ".."
+[dependencies]
+libfuzzer-sys = "0.4"
+btoi = { path = ".." }
 
-[dependencies.libfuzzer-sys]
-git = "https://github.com/rust-fuzz/libfuzzer-sys.git"
+[workspace]
+members = ["."] # Let fuzzing suite not interfere with workspaces
 
 [[bin]]
 name = "btoi_radix"

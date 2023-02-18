@@ -154,6 +154,7 @@ impl Error for ParseIntegerError {
 /// ```
 ///
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
+#[track_caller]
 pub fn btou_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedAdd + CheckedMul,
@@ -229,6 +230,7 @@ where
 /// ```
 ///
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
+#[track_caller]
 pub fn btou<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedAdd + CheckedMul,
@@ -268,6 +270,7 @@ where
 ///
 /// [`btou_radix`]: fn.btou_radix.html
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
+#[track_caller]
 pub fn btoi_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedAdd + CheckedSub + CheckedMul,
@@ -364,6 +367,7 @@ where
 ///
 /// [`btou`]: fn.btou.html
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
+#[track_caller]
 pub fn btoi<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedAdd + CheckedSub + CheckedMul,
@@ -397,6 +401,7 @@ where
 /// ```
 ///
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
+#[track_caller]
 pub fn btou_saturating_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded,
@@ -461,6 +466,7 @@ where
 /// ```
 ///
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
+#[track_caller]
 pub fn btou_saturating<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded,
@@ -499,6 +505,7 @@ where
 ///
 /// [`btou_saturating_radix`]: fn.btou_saturating_radix.html
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
+#[track_caller]
 pub fn btoi_saturating_radix<I>(bytes: &[u8], radix: u32) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded,
@@ -583,6 +590,7 @@ where
 ///
 /// [`btou_saturating`]: fn.btou_saturating.html
 /// [`ParseIntegerError`]: struct.ParseIntegerError.html
+#[track_caller]
 pub fn btoi_saturating<I>(bytes: &[u8]) -> Result<I, ParseIntegerError>
 where
     I: FromPrimitive + Zero + CheckedMul + Saturating + Bounded,

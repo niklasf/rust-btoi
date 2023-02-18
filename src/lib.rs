@@ -1,4 +1,4 @@
-// Copyright 2017-2018 Niklas Fiekas <niklas.fiekas@backscattering.de>
+// Copyright 2017-2023 Niklas Fiekas <niklas.fiekas@backscattering.de>
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
 // http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
@@ -66,7 +66,7 @@
 //! [`ParseIntegerError`]: struct.ParseIntegerError.html
 //! [`from_str_radix`]: https://doc.rust-lang.org/std/primitive.u32.html#method.from_str_radix
 
-#![doc(html_root_url = "https://docs.rs/btoi/0.4.2")]
+#![doc(html_root_url = "https://docs.rs/btoi/0.4.3")]
 #![forbid(unsafe_code)]
 #![deny(missing_docs)]
 #![deny(missing_debug_implementations)]

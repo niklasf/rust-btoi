@@ -30,6 +30,8 @@ Documentation
 Changelog
 ---------
 
+* 0.4.3
+  - Use `#[track_caller]`.
 * 0.4.2
   - No longer `!#[deny(warnings)]`, which is is a forwards compability hazard
     in libraries.

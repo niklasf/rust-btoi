@@ -13,9 +13,6 @@ description = "Parse integers directly from ASCII byte slices"
 name = "benches"
 harness = false
 
-[badges]
-travis-ci = { repository = "niklasf/rust-btoi" }
-
 [dependencies.num-traits]
 version = "0.2"
 default-features = false

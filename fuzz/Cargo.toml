@@ -21,3 +21,7 @@ path = "fuzz_targets/btoi_radix.rs"
 [[bin]]
 name = "verify_u64"
 path = "fuzz_targets/verify_u64.rs"
+
+[[bin]]
+name = "verify_i64"
+path = "fuzz_targets/verify_i64.rs"

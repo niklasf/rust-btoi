@@ -600,43 +600,53 @@ where
 
 #[cfg(test)]
 mod tests {
+    #[cfg(feature = "std")]
     use std::str;
 
     use super::*;
 
     quickcheck! {
+        #[cfg(feature = "std")]
         fn btou_identity(n: u32) -> bool {
             Ok(n) == btou(n.to_string().as_bytes())
         }
 
+        #[cfg(feature = "std")]
         fn btou_binary_identity(n: u64) -> bool {
             Ok(n) == btou_radix(format!("{:b}", n).as_bytes(), 2)
         }
 
+        #[cfg(feature = "std")]
         fn btou_octal_identity(n: u64) -> bool {
             Ok(n) == btou_radix(format!("{:o}", n).as_bytes(), 8)
         }
 
+        #[cfg(feature = "std")]
         fn btou_lower_hex_identity(n: u64) -> bool {
             Ok(n) == btou_radix(format!("{:x}", n).as_bytes(), 16)
         }
 
+        #[cfg(feature = "std")]
         fn btou_upper_hex_identity(n: u64) -> bool {
             Ok(n) == btou_radix(format!("{:X}", n).as_bytes(), 16)
         }
 
+        #[cfg(feature = "std")]
         fn btoi_identity(n: i32) -> bool {
             Ok(n) == btoi(n.to_string().as_bytes())
         }
 
+        #[cfg(feature = "std")]
         fn btou_saturating_identity(n: u32) -> bool {
             Ok(n) == btou_saturating(n.to_string().as_bytes())
         }
 
+        #[cfg(feature = "std")]
         fn btoi_saturating_identity(n: i32) -> bool {
             Ok(n) == btoi_saturating(n.to_string().as_bytes())
         }
 
+        #[cfg(feature = "std")]
         fn btoi_radix_std(bytes: Vec<u8>, radix: u32) -> bool {
             let radix = radix % 35 + 2; // panic unless 2 <= radix <= 36
             str::from_utf8(&bytes).ok().and_then(|src| i32::from_str_radix(src, radix).ok()) ==

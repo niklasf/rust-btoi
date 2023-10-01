@@ -176,13 +176,10 @@ where
     let mut result = I::zero();
 
     for &digit in bytes {
-        let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
-            Some(x) => x,
-            None => {
-                return Err(ParseIntegerError {
-                    kind: ErrorKind::InvalidDigit,
-                })
-            }
+        let Some(x) = char::from(digit).to_digit(radix).and_then(I::from_u32) else {
+            return Err(ParseIntegerError {
+                kind: ErrorKind::InvalidDigit,
+            });
         };
         result = match result.checked_mul(&base) {
             Some(result) => result,
@@ -304,13 +301,10 @@ where
     let mut result = I::zero();
 
     for &digit in digits {
-        let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
-            Some(x) => x,
-            None => {
-                return Err(ParseIntegerError {
-                    kind: ErrorKind::InvalidDigit,
-                })
-            }
+        let Some(x) = char::from(digit).to_digit(radix).and_then(I::from_u32) else {
+            return Err(ParseIntegerError {
+                kind: ErrorKind::InvalidDigit,
+            });
         };
         result = match result.checked_mul(&base) {
             Some(result) => result,
@@ -423,13 +417,10 @@ where
     let mut result = I::zero();
 
     for &digit in bytes {
-        let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
-            Some(x) => x,
-            None => {
-                return Err(ParseIntegerError {
-                    kind: ErrorKind::InvalidDigit,
-                })
-            }
+        let Some(x) = char::from(digit).to_digit(radix).and_then(I::from_u32) else {
+            return Err(ParseIntegerError {
+                kind: ErrorKind::InvalidDigit,
+            });
         };
         result = match result.checked_mul(&base) {
             Some(result) => result,
@@ -539,13 +530,10 @@ where
     let mut result = I::zero();
 
     for &digit in digits {
-        let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
-            Some(x) => x,
-            None => {
-                return Err(ParseIntegerError {
-                    kind: ErrorKind::InvalidDigit,
-                })
-            }
+        let Some(x) = char::from(digit).to_digit(radix).and_then(I::from_u32) else {
+            return Err(ParseIntegerError {
+                kind: ErrorKind::InvalidDigit,
+            });
         };
         result = match result.checked_mul(&base) {
             Some(result) => result,

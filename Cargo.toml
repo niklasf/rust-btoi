@@ -8,6 +8,7 @@ readme = "README.md"
 repository = "https://github.com/niklasf/rust-btoi"
 categories = ["parsing"]
 description = "Parse integers directly from ASCII byte slices"
+edition = "2021"
 
 [[bench]]
 name = "benches"

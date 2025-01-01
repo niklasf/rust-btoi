@@ -168,12 +168,13 @@ where
     let mut result = I::zero();
 
     for &digit in bytes {
+        let mul  = result.checked_mul(&base);
         let Some(x) = char::from(digit).to_digit(radix).and_then(I::from_u32) else {
             return Err(ParseIntegerError {
                 kind: ErrorKind::InvalidDigit,
             });
         };
-        result = match result.checked_mul(&base) {
+        result = match mul {
             Some(result) => result,
             None => {
                 return Err(ParseIntegerError {
@@ -293,12 +294,13 @@ where
     let mut result = I::zero();
 
     for &digit in digits {
+        let mul = result.checked_mul(&base);
         let Some(x) = char::from(digit).to_digit(radix).and_then(I::from_u32) else {
             return Err(ParseIntegerError {
                 kind: ErrorKind::InvalidDigit,
             });
         };
-        result = match result.checked_mul(&base) {
+        result = match mul {
             Some(result) => result,
             None => {
                 return Err(ParseIntegerError {
@@ -409,12 +411,13 @@ where
     let mut result = I::zero();
 
     for &digit in bytes {
+        let mul = result.checked_mul(&base);
         let Some(x) = char::from(digit).to_digit(radix).and_then(I::from_u32) else {
             return Err(ParseIntegerError {
                 kind: ErrorKind::InvalidDigit,
             });
         };
-        result = match result.checked_mul(&base) {
+        result = match mul {
             Some(result) => result,
             None => return Ok(I::max_value()),
         };
@@ -522,12 +525,13 @@ where
     let mut result = I::zero();
 
     for &digit in digits {
+        let mul = result.checked_mul(&base);
         let Some(x) = char::from(digit).to_digit(radix).and_then(I::from_u32) else {
             return Err(ParseIntegerError {
                 kind: ErrorKind::InvalidDigit,
             });
         };
-        result = match result.checked_mul(&base) {
+        result = match mul {
             Some(result) => result,
             None => return Ok(I::min_value()),
         };

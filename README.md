@@ -29,7 +29,7 @@ Documentation
 Changelog
 ---------
 
-* Upcoming
+* 0.4.4
   - Implement `core::error::Error` for `ParseIntegerError`.
 * 0.4.3
   - Use `#[track_caller]`.

@@ -62,19 +62,14 @@
 #![forbid(unsafe_code)]
 #![deny(missing_docs)]
 #![deny(missing_debug_implementations)]
-#![cfg_attr(not(feature = "std"), no_std)]
-
-extern crate num_traits;
+#![no_std]
 
 #[cfg(test)]
 #[macro_use]
 extern crate quickcheck;
-#[cfg(feature = "std")]
-extern crate std as core;
 
-use core::fmt;
-#[cfg(feature = "std")]
-use std::error::Error;
+extern crate num_traits;
+use core::{error::Error, fmt};
 
 use num_traits::{Bounded, CheckedAdd, CheckedMul, CheckedSub, FromPrimitive, Saturating, Zero};
 
@@ -114,7 +109,6 @@ impl fmt::Display for ParseIntegerError {
     }
 }
 
-#[cfg(feature = "std")]
 impl Error for ParseIntegerError {
     fn description(&self) -> &str {
         self.desc()
@@ -168,7 +162,7 @@ where
     let mut result = I::zero();
 
     for &digit in bytes {
-        let mul  = result.checked_mul(&base);
+        let mul = result.checked_mul(&base);
         let Some(x) = char::from(digit).to_digit(radix).and_then(I::from_u32) else {
             return Err(ParseIntegerError {
                 kind: ErrorKind::InvalidDigit,
@@ -585,7 +579,10 @@ where
 #[cfg(test)]
 mod tests {
     #[cfg(feature = "std")]
-    use std::str;
+    extern crate std;
+
+    #[cfg(feature = "std")]
+    use std::{format, str, string::ToString as _, vec::Vec};
 
     use super::*;
 

@@ -19,17 +19,10 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.toolchain }}
+          targets: thumbv6m-none-eabi
       - run: cargo test
       - run: cargo test --no-default-features
       - run: cargo bench
       - run: cargo check --manifest-path fuzz/Cargo.toml
         if: matrix.toolchain == 'nightly'
-  check_no_std:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: stable
-          targets: thumbv6m-none-eabi
       - run: cargo check --target thumbv6m-none-eabi --no-default-features

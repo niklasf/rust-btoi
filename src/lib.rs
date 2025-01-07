@@ -64,12 +64,16 @@
 #![deny(missing_debug_implementations)]
 #![no_std]
 
+extern crate num_traits;
+
+#[cfg(feature = "std")]
+extern crate std;
+
 #[cfg(test)]
 #[macro_use]
 extern crate quickcheck;
 
-extern crate num_traits;
-use core::{error::Error, fmt};
+use core::fmt;
 
 use num_traits::{Bounded, CheckedAdd, CheckedMul, CheckedSub, FromPrimitive, Saturating, Zero};
 
@@ -92,28 +96,19 @@ enum ErrorKind {
     Underflow,
 }
 
-impl ParseIntegerError {
-    fn desc(&self) -> &str {
-        match self.kind {
+impl fmt::Display for ParseIntegerError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.write_str(match self.kind {
             ErrorKind::Empty => "cannot parse integer without digits",
             ErrorKind::InvalidDigit => "invalid digit found in slice",
             ErrorKind::Overflow => "number too large to fit in target type",
             ErrorKind::Underflow => "number too small to fit in target type",
-        }
+        })
     }
 }
 
-impl fmt::Display for ParseIntegerError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.desc().fmt(f)
-    }
-}
-
-impl Error for ParseIntegerError {
-    fn description(&self) -> &str {
-        self.desc()
-    }
-}
+#[cfg(feature = "std")]
+impl std::error::Error for ParseIntegerError {}
 
 /// Converts a byte slice in a given base to an integer. Signs are not allowed.
 ///
@@ -163,10 +158,13 @@ where
 
     for &digit in bytes {
         let mul = result.checked_mul(&base);
-        let Some(x) = char::from(digit).to_digit(radix).and_then(I::from_u32) else {
-            return Err(ParseIntegerError {
-                kind: ErrorKind::InvalidDigit,
-            });
+        let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
+            Some(x) => x,
+            None => {
+                return Err(ParseIntegerError {
+                    kind: ErrorKind::InvalidDigit,
+                })
+            }
         };
         result = match mul {
             Some(result) => result,
@@ -289,10 +287,13 @@ where
 
     for &digit in digits {
         let mul = result.checked_mul(&base);
-        let Some(x) = char::from(digit).to_digit(radix).and_then(I::from_u32) else {
-            return Err(ParseIntegerError {
-                kind: ErrorKind::InvalidDigit,
-            });
+        let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
+            Some(x) => x,
+            None => {
+                return Err(ParseIntegerError {
+                    kind: ErrorKind::InvalidDigit,
+                })
+            }
         };
         result = match mul {
             Some(result) => result,
@@ -406,10 +407,13 @@ where
 
     for &digit in bytes {
         let mul = result.checked_mul(&base);
-        let Some(x) = char::from(digit).to_digit(radix).and_then(I::from_u32) else {
-            return Err(ParseIntegerError {
-                kind: ErrorKind::InvalidDigit,
-            });
+        let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
+            Some(x) => x,
+            None => {
+                return Err(ParseIntegerError {
+                    kind: ErrorKind::InvalidDigit,
+                })
+            }
         };
         result = match mul {
             Some(result) => result,
@@ -520,10 +524,13 @@ where
 
     for &digit in digits {
         let mul = result.checked_mul(&base);
-        let Some(x) = char::from(digit).to_digit(radix).and_then(I::from_u32) else {
-            return Err(ParseIntegerError {
-                kind: ErrorKind::InvalidDigit,
-            });
+        let x = match char::from(digit).to_digit(radix).and_then(I::from_u32) {
+            Some(x) => x,
+            None => {
+                return Err(ParseIntegerError {
+                    kind: ErrorKind::InvalidDigit,
+                })
+            }
         };
         result = match mul {
             Some(result) => result,

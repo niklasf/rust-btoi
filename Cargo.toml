@@ -1,6 +1,6 @@
 [package]
 name = "btoi"
-version = "0.4.4" # remember to update changelog and html_root_url
+version = "0.4.4" # remember to bump to 0.5.x, update changelog and html_root_url
 authors = ["Niklas Fiekas <niklas.fiekas@backscattering.de>"]
 license = "MIT OR Apache-2.0"
 keywords = ["conversion", "integer", "atoi", "no_std"]
@@ -8,6 +8,7 @@ readme = "README.md"
 repository = "https://github.com/niklasf/rust-btoi"
 categories = ["parsing"]
 description = "Parse integers directly from ASCII byte slices"
+rust-version = "1.60"
 edition = "2021"
 
 [[bench]]

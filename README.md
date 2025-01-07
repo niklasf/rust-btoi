@@ -26,10 +26,22 @@ Documentation
 
 [Read the documentation](https://docs.rs/btoi)
 
+MSRV policy
+-----------
+
+The minimum supported Rust version is 1.60, matching
+[`num_traits`](https://crates.io/crates/num-traits),
+with no intent to ever increase it.
+
+That's because
+[`#![feature(int_from_ascii)]`](https://github.com/rust-lang/rust/issues/134821)
+in the standard library will hopefully eventually make this crate obsolete
+for new versions of Rust, and so old versions are the priority.
+
 Changelog
 ---------
 
-* 0.4.4
+* 0.4.4 (yanked due to unintended MSRV bump)
   - Implement `core::error::Error` for `ParseIntegerError`.
 * 0.4.3
   - Use `#[track_caller]`.

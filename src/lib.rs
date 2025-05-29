@@ -23,7 +23,7 @@
 //! // overflows the selected target type
 //! assert!(btoi::<u32>(b"9876543210").is_err());
 //!
-//! // underflows the selected target type (an unsigned integer)
+//! // negatively overflows the selected target type (an unsigned integer)
 //! assert!(btoi::<u32>(b"-1").is_err());
 //! ```
 //!
@@ -46,8 +46,8 @@
 //!   leading `+` or `-` sign. The `btou*` functions respectively do not
 //!   allow signs.
 //! * Not all digits are valid in the given radix.
-//! * The number overflows or underflows the target type, but saturating
-//!   arithmetic is not used.
+//! * The number overflows (positively or negatively) the target type, but
+//!   saturating arithmetic is not used.
 //!
 //! # Panics
 //!
@@ -77,32 +77,39 @@ use core::fmt;
 
 use num_traits::{Bounded, CheckedAdd, CheckedMul, CheckedSub, FromPrimitive, Saturating, Zero};
 
-/// An error that can occur when parsing an integer.
-///
-/// * No digits
-/// * Invalid digit
-/// * Overflow
-/// * Underflow
+/// Error that can occur when trying to parse an integer.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ParseIntegerError {
     kind: ErrorKind,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-enum ErrorKind {
+impl ParseIntegerError {
+    /// The specific kind of error that occured.
+    pub fn kind(&self) -> ErrorKind {
+        self.kind
+    }
+}
+
+/// Kinds of errors that can occur when trying to parse an integer.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum ErrorKind {
+    /// Cannot parse integer without digits.
     Empty,
+    /// Invalid digit found.
     InvalidDigit,
-    Overflow,
-    Underflow,
+    /// Integer too large to fit in target type.
+    PosOverflow,
+    /// Integer too small to fit in target type.
+    NegOverflow,
 }
 
 impl fmt::Display for ParseIntegerError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.write_str(match self.kind {
             ErrorKind::Empty => "cannot parse integer without digits",
-            ErrorKind::InvalidDigit => "invalid digit found in slice",
-            ErrorKind::Overflow => "number too large to fit in target type",
-            ErrorKind::Underflow => "number too small to fit in target type",
+            ErrorKind::InvalidDigit => "invalid digit found",
+            ErrorKind::PosOverflow => "integer too large to fit in target type",
+            ErrorKind::NegOverflow => "integer too small to fit in target type",
         })
     }
 }
@@ -170,7 +177,7 @@ where
             Some(result) => result,
             None => {
                 return Err(ParseIntegerError {
-                    kind: ErrorKind::Overflow,
+                    kind: ErrorKind::PosOverflow,
                 })
             }
         };
@@ -178,7 +185,7 @@ where
             Some(result) => result,
             None => {
                 return Err(ParseIntegerError {
-                    kind: ErrorKind::Overflow,
+                    kind: ErrorKind::PosOverflow,
                 })
             }
         };
@@ -234,7 +241,7 @@ where
 ///   optional leading sign
 /// * not all characters refer to digits in the given `radix`, exluding an
 ///   optional leading sign
-/// * the number overflows or underflows `I`
+/// * the number overflows `I` (positively or negatively)
 ///
 /// # Panics
 ///
@@ -299,7 +306,7 @@ where
             Some(result) => result,
             None => {
                 return Err(ParseIntegerError {
-                    kind: ErrorKind::Underflow,
+                    kind: ErrorKind::NegOverflow,
                 })
             }
         };
@@ -307,7 +314,7 @@ where
             Some(result) => result,
             None => {
                 return Err(ParseIntegerError {
-                    kind: ErrorKind::Underflow,
+                    kind: ErrorKind::NegOverflow,
                 })
             }
         };
@@ -327,7 +334,7 @@ where
 /// * `bytes` has no digits
 /// * not all characters of `bytes` are `0-9`, excluding an optional leading
 ///   sign
-/// * the number overflows or underflows `I`
+/// * the number overflows `I` (positively or negatively)
 ///
 /// # Panics
 ///
@@ -342,8 +349,8 @@ where
 /// assert_eq!(Ok(123), btoi(b"+123"));
 /// assert_eq!(Ok(-123), btoi(b"-123"));
 ///
-/// assert!(btoi::<i16>(b"123456789").is_err()); // overflow
-/// assert!(btoi::<u32>(b"-1").is_err()); // underflow
+/// assert!(btoi::<i16>(b"123456789").is_err()); // positive overflow
+/// assert!(btoi::<u32>(b"-1").is_err()); // negative overflow
 ///
 /// assert!(btoi::<i32>(b" 42").is_err()); // leading space
 /// ```
@@ -483,8 +490,8 @@ where
 /// ```
 /// # use btoi::btoi_saturating_radix;
 /// assert_eq!(Ok(127), btoi_saturating_radix::<i8>(b"7f", 16));
-/// assert_eq!(Ok(127), btoi_saturating_radix::<i8>(b"ff", 16)); // no overflow
-/// assert_eq!(Ok(-128), btoi_saturating_radix::<i8>(b"-ff", 16)); // no underflow
+/// assert_eq!(Ok(127), btoi_saturating_radix::<i8>(b"ff", 16)); // no positive overflow
+/// assert_eq!(Ok(-128), btoi_saturating_radix::<i8>(b"-ff", 16)); // no negative overflow
 /// ```
 ///
 /// [`btou_saturating_radix`]: fn.btou_saturating_radix.html

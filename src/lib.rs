@@ -58,7 +58,7 @@
 //! [`ParseIntegerError`]: struct.ParseIntegerError.html
 //! [`from_str_radix`]: https://doc.rust-lang.org/std/primitive.u32.html#method.from_str_radix
 
-#![doc(html_root_url = "https://docs.rs/btoi/0.4.4")]
+#![doc(html_root_url = "https://docs.rs/btoi/0.5.0")]
 #![forbid(unsafe_code)]
 #![deny(missing_docs)]
 #![deny(missing_debug_implementations)]
@@ -80,19 +80,19 @@ use num_traits::{Bounded, CheckedAdd, CheckedMul, CheckedSub, FromPrimitive, Sat
 /// Error that can occur when trying to parse an integer.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ParseIntegerError {
-    kind: ErrorKind,
+    kind: ParseIntegerErrorKind,
 }
 
 impl ParseIntegerError {
     /// The specific kind of error that occured.
-    pub fn kind(&self) -> ErrorKind {
+    pub fn kind(&self) -> ParseIntegerErrorKind {
         self.kind
     }
 }
 
 /// Kinds of errors that can occur when trying to parse an integer.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum ErrorKind {
+pub enum ParseIntegerErrorKind {
     /// Cannot parse integer without digits.
     Empty,
     /// Invalid digit found.
@@ -106,10 +106,10 @@ pub enum ErrorKind {
 impl fmt::Display for ParseIntegerError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.write_str(match self.kind {
-            ErrorKind::Empty => "cannot parse integer without digits",
-            ErrorKind::InvalidDigit => "invalid digit found",
-            ErrorKind::PosOverflow => "integer too large to fit in target type",
-            ErrorKind::NegOverflow => "integer too small to fit in target type",
+            ParseIntegerErrorKind::Empty => "cannot parse integer without digits",
+            ParseIntegerErrorKind::InvalidDigit => "invalid digit found",
+            ParseIntegerErrorKind::PosOverflow => "integer too large to fit in target type",
+            ParseIntegerErrorKind::NegOverflow => "integer too small to fit in target type",
         })
     }
 }
@@ -157,7 +157,7 @@ where
 
     if bytes.is_empty() {
         return Err(ParseIntegerError {
-            kind: ErrorKind::Empty,
+            kind: ParseIntegerErrorKind::Empty,
         });
     }
 
@@ -169,7 +169,7 @@ where
             Some(x) => x,
             None => {
                 return Err(ParseIntegerError {
-                    kind: ErrorKind::InvalidDigit,
+                    kind: ParseIntegerErrorKind::InvalidDigit,
                 })
             }
         };
@@ -177,7 +177,7 @@ where
             Some(result) => result,
             None => {
                 return Err(ParseIntegerError {
-                    kind: ErrorKind::PosOverflow,
+                    kind: ParseIntegerErrorKind::PosOverflow,
                 })
             }
         };
@@ -185,7 +185,7 @@ where
             Some(result) => result,
             None => {
                 return Err(ParseIntegerError {
-                    kind: ErrorKind::PosOverflow,
+                    kind: ParseIntegerErrorKind::PosOverflow,
                 })
             }
         };
@@ -274,7 +274,7 @@ where
 
     if bytes.is_empty() {
         return Err(ParseIntegerError {
-            kind: ErrorKind::Empty,
+            kind: ParseIntegerErrorKind::Empty,
         });
     }
 
@@ -286,7 +286,7 @@ where
 
     if digits.is_empty() {
         return Err(ParseIntegerError {
-            kind: ErrorKind::Empty,
+            kind: ParseIntegerErrorKind::Empty,
         });
     }
 
@@ -298,7 +298,7 @@ where
             Some(x) => x,
             None => {
                 return Err(ParseIntegerError {
-                    kind: ErrorKind::InvalidDigit,
+                    kind: ParseIntegerErrorKind::InvalidDigit,
                 })
             }
         };
@@ -306,7 +306,7 @@ where
             Some(result) => result,
             None => {
                 return Err(ParseIntegerError {
-                    kind: ErrorKind::NegOverflow,
+                    kind: ParseIntegerErrorKind::NegOverflow,
                 })
             }
         };
@@ -314,7 +314,7 @@ where
             Some(result) => result,
             None => {
                 return Err(ParseIntegerError {
-                    kind: ErrorKind::NegOverflow,
+                    kind: ParseIntegerErrorKind::NegOverflow,
                 })
             }
         };
@@ -406,7 +406,7 @@ where
 
     if bytes.is_empty() {
         return Err(ParseIntegerError {
-            kind: ErrorKind::Empty,
+            kind: ParseIntegerErrorKind::Empty,
         });
     }
 
@@ -418,7 +418,7 @@ where
             Some(x) => x,
             None => {
                 return Err(ParseIntegerError {
-                    kind: ErrorKind::InvalidDigit,
+                    kind: ParseIntegerErrorKind::InvalidDigit,
                 })
             }
         };
@@ -511,7 +511,7 @@ where
 
     if bytes.is_empty() {
         return Err(ParseIntegerError {
-            kind: ErrorKind::Empty,
+            kind: ParseIntegerErrorKind::Empty,
         });
     }
 
@@ -523,7 +523,7 @@ where
 
     if digits.is_empty() {
         return Err(ParseIntegerError {
-            kind: ErrorKind::Empty,
+            kind: ParseIntegerErrorKind::Empty,
         });
     }
 
@@ -535,7 +535,7 @@ where
             Some(x) => x,
             None => {
                 return Err(ParseIntegerError {
-                    kind: ErrorKind::InvalidDigit,
+                    kind: ParseIntegerErrorKind::InvalidDigit,
                 })
             }
         };

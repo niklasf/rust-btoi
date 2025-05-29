@@ -41,8 +41,11 @@ for new versions of Rust, and so old versions are the priority.
 Changelog
 ---------
 
+* 0.5.0
+  - Tweak error messages and expose `ParseIntegerErrorKind` via
+    `ParseIntegerError::kind()`.
 * 0.4.4 (yanked due to unintended MSRV bump)
-  - Implement `core::error::Error` for `ParseIntegerError`.
+  - ~~Implement `core::error::Error` for `ParseIntegerError`.~~
 * 0.4.3
   - Use `#[track_caller]`.
 * 0.4.2

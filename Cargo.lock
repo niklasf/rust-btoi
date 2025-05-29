@@ -25,7 +25,7 @@ checksum = "7dfdb4953a096c551ce9ace855a604d702e6e62d77fac690575ae347571717f5"
 
 [[package]]
 name = "btoi"
-version = "0.4.4"
+version = "0.5.0"
 dependencies = [
  "bencher",
  "num-traits",
